@@ -6,7 +6,9 @@ public class PlayerIdleState : PlayerStateBase
 
     public override void Enter()
     {
-        player.Movement.StopMoving();
+        Debug.Log("Entering Idle State");
+        player.Movement.StopMovement();
+        player.AnimationController.SetMovement(0);
     }
 
     public override void HandleInput(PlayerInputData input)
@@ -16,10 +18,10 @@ public class PlayerIdleState : PlayerStateBase
 
     public override PlayerState? CheckTransitions(PlayerInputData input)
     {
-        if (input.isAiming && input.shootTriggered && player.Shooting.CanShoot())
+        if (input.IsAiming && input.ShootTriggered && player.Shooting.CanShoot())
             return PlayerState.Shoot;
 
-        if (input.isMoving)
+        if (input.IsMoving)
             return PlayerState.Move;
 
         return null;

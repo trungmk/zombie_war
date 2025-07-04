@@ -21,11 +21,11 @@ public class PlayerShootState : PlayerStateBase
 
     public override void HandleInput(PlayerInputData input)
     {
-        if (input.isMoving)
+        if (input.IsMoving)
         {
             stateMachine.ChangeState(PlayerState.MoveAndShoot);
         }    
-        else if (input.grenadeTriggered)
+        else if (input.GrenadeTriggered)
         {
             stateMachine.ChangeState(PlayerState.ThrowGrenade);
         }    
@@ -35,13 +35,13 @@ public class PlayerShootState : PlayerStateBase
     {
         if (_shootTimer >= _shootDuration)
         {
-            if (input.isMoving)
+            if (input.IsMoving)
                 return PlayerState.Move;
             else
                 return PlayerState.Idle;
         }
 
-        if (input.isMoving)
+        if (input.IsMoving)
             return PlayerState.MoveAndShoot;
 
         return null;

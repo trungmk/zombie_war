@@ -6,8 +6,8 @@ public class PlayerDieState : PlayerStateBase
 
     public override void Enter()
     {
-        player.Movement.StopMoving();
-        player.AnimationController.SetState(PlayerState.Die);
+        player.Movement.StopMovement();
+        //player.AnimationController.SetState(PlayerState.Die);
     }
 
     public override void HandleInput(PlayerInputData input) { }

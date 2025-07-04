@@ -26,13 +26,13 @@ public class PlayerThrowGrenadeState : PlayerStateBase
     {
         if (_grenadeTimer >= _grenadeDuration)
         {
-            if (input.isMoving)
+            if (input.IsMoving)
                 return PlayerState.Move;
             else
                 return PlayerState.Idle;
         }
 
-        if (input.isMoving)
+        if (input.IsMoving)
             return PlayerState.MoveAndGrenade;
 
         return null;

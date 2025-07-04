@@ -6,19 +6,19 @@ public class PlayerMoveAndShootState : PlayerStateBase
 
     public override void HandleInput(PlayerInputData input)
     {
-        player.Movement.Move(new Vector3(input.movementInput.x, 0, input.movementInput.y));
-        player.Shooting.AutoShoot(input.aimInput);
+        player.Movement.Move(new Vector3(input.MovementInput.x, 0, input.MovementInput.y));
+        player.Shooting.Shoot(input.AimInput);
     }
 
     public override PlayerState? CheckTransitions(PlayerInputData input)
     {
-        if (!input.isMoving && !input.isAiming)
+        if (!input.IsMoving && !input.IsAiming)
             return PlayerState.Idle;
         
-        if (!input.isMoving)
+        if (!input.IsMoving)
             return PlayerState.Shoot;
         
-        if (!input.isAiming)
+        if (!input.IsAiming)
             return PlayerState.Move;
 
         return null;

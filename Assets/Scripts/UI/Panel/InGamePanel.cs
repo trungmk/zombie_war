@@ -24,10 +24,6 @@ public class InGamePanel : PanelView, ITouchTarget
 
     public bool IsActive => gameObject.activeSelf;
 
-    private Vector2 _cachedLeftJoystickPosition;
-
-    private Vector2 _cachedRightJoystickPosition;
-
     protected override void OnPanelShowed(params object[] args)
     {
         _joyStickHandler = args[0] as JoyStickHandler;
@@ -38,8 +34,8 @@ public class InGamePanel : PanelView, ITouchTarget
         }
 
         _uiCamera = CameraManager.Instance.UICamera.Camera;
-        _cachedLeftJoystickPosition = _leftJoystickOriginPosition.position;
-        _cachedRightJoystickPosition = _rightJoystickOriginPosition.position;
+        _leftJoystick.transform.position = _leftJoystickOriginPosition.position;
+        _righttJoystick.transform.position = _rightJoystickOriginPosition.position;
         _leftJoystick.Setup(_joyStickHandler, Joystick.Left);
         _righttJoystick.Setup(_joyStickHandler, Joystick.Right);
     }

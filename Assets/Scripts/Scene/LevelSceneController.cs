@@ -21,6 +21,8 @@ public class LevelSceneController : SceneController
                 InGamePanel inGamePanel = view as InGamePanel;
                 _inputHandler.RegisterTouchTarget(inGamePanel);
             });
+
+        _gameManager.StartGame();
     }
 
     public override void OnUnloaded()

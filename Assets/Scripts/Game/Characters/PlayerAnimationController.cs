@@ -3,47 +3,37 @@
 [RequireComponent(typeof(Animator))]
 public class PlayerAnimationController : MonoBehaviour
 {
-    [Header("Animation Parameters")]
-    [SerializeField] private string _stateParameter = "State";
-    [SerializeField] private string _moveXParameter = "MoveX";
-    [SerializeField] private string _moveYParameter = "MoveY";
-    [SerializeField] private string _aimXParameter = "AimX";
-    [SerializeField] private string _aimYParameter = "AimY";
-    [SerializeField] private string _shootTrigger = "Shoot";
-    [SerializeField] private string _grenadeTrigger = "ThrowGrenade";
+    private const string STATE_PARAMETER = "State";
+    private const string SHOOT_TRIGGER = "Shoot";
+    private const string GRENADE_TRIGGER = "ThrowGrenade";
+    private const string MOVEMENT_SPEED_PARAM = "MovementSpeed";
+    private const string AIM_X_PARAM = "AimX";
+    private const string AIM_Y_PARAM = "AimY";
 
     private Animator _animator;
     private int _stateHash;
-    private int _moveXHash;
-    private int _moveYHash;
-    private int _aimXHash;
-    private int _aimYHash;
     private int _shootHash;
     private int _grenadeHash;
+    private int _movementSpeedHash;
+    private int _aimXHash;
+    private int _aimYHash;
 
     private void Awake()
     {
         _animator = GetComponent<Animator>();
 
         // Cache parameter hashes for performance
-        _stateHash = Animator.StringToHash(_stateParameter);
-        _moveXHash = Animator.StringToHash(_moveXParameter);
-        _moveYHash = Animator.StringToHash(_moveYParameter);
-        _aimXHash = Animator.StringToHash(_aimXParameter);
-        _aimYHash = Animator.StringToHash(_aimYParameter);
-        _shootHash = Animator.StringToHash(_shootTrigger);
-        _grenadeHash = Animator.StringToHash(_grenadeTrigger);
+        _stateHash = Animator.StringToHash(STATE_PARAMETER);
+        _shootHash = Animator.StringToHash(SHOOT_TRIGGER);
+        _grenadeHash = Animator.StringToHash(GRENADE_TRIGGER);
+        _movementSpeedHash = Animator.StringToHash(MOVEMENT_SPEED_PARAM);
+        _aimXHash = Animator.StringToHash(AIM_X_PARAM);
+        _aimYHash = Animator.StringToHash(AIM_Y_PARAM);
     }
 
-    public void SetState(PlayerState state)
+    public void SetMovement(float speed)
     {
-        _animator.SetInteger(_stateHash, (int)state);
-    }
-
-    public void SetMovement(Vector2 movement)
-    {
-        _animator.SetFloat(_moveXHash, movement.x);
-        _animator.SetFloat(_moveYHash, movement.y);
+        _animator.SetFloat(_movementSpeedHash, speed);
     }
 
     public void SetAim(Vector2 aim)

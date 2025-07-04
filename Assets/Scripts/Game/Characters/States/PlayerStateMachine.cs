@@ -30,12 +30,23 @@ public class PlayerStateMachine : MonoBehaviour
 
     public void ChangeState(PlayerState newState)
     {
-        if (CurrentStateType == newState) return;
-        _currentState?.Exit();
+        if (CurrentStateType == newState && _currentState != null)
+        {
+            return;
+        }
+
+        if (_currentState != null)
+        {
+            _currentState.Exit();
+        }
+
         CurrentStateType = newState;
+
         _currentState = GetStateInstance(newState);
-        _currentState?.Enter();
-        _player.AnimationController?.SetState(newState);
+        if (_currentState != null)
+        {
+            _currentState.Enter();
+        }
     }
 
     private PlayerStateBase GetStateInstance(PlayerState state)
@@ -55,18 +66,37 @@ public class PlayerStateMachine : MonoBehaviour
 
     public void HandleInput(PlayerInputData input)
     {
-        _currentState?.HandleInput(input);
-        _currentState?.Update();
-        
-        var nextState = _currentState?.CheckTransitions(input);
+        if (_currentState == null)
+        {
+            return;
+        }
+
+        _currentState.HandleInput(input);
+        PlayerState? nextState = _currentState.CheckTransitions(input);
+
         if (nextState.HasValue)
         {
             ChangeState(nextState.Value);
         }
     }
 
+    private void Update()
+    {
+        if (_currentState == null)
+        {
+            return;
+        }
+
+        _currentState.Update();
+    }
+
     private void FixedUpdate()
     {
-        _currentState?.FixedUpdate();
+        if (_currentState == null)
+        {
+            return;
+        }
+
+        _currentState.FixedUpdate();
     }
 }

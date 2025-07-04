@@ -2,20 +2,20 @@
 
 public struct PlayerInputData
 {
-    public Vector2 movementInput;
-    public Vector2 aimInput;
-    public bool isMoving;
-    public bool isAiming;
-    public bool shootTriggered;
-    public bool grenadeTriggered;
+    public Vector2 MovementInput;
+    public Vector2 AimInput;
+    public bool IsMoving;
+    public bool IsAiming;
+    public bool ShootTriggered;
+    public bool GrenadeTriggered;
 
     public PlayerInputData(Vector2 movement, Vector2 aim, bool moving, bool aiming, bool shoot, bool grenade)
     {
-        movementInput = movement;
-        aimInput = aim;
-        isMoving = moving;
-        isAiming = aiming;
-        shootTriggered = shoot;
-        grenadeTriggered = grenade;
+        MovementInput = movement;
+        AimInput = aim;
+        IsMoving = moving;
+        IsAiming = aiming;
+        ShootTriggered = shoot;
+        GrenadeTriggered = grenade;
     }
 }

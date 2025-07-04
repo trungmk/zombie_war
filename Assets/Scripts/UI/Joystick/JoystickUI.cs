@@ -29,9 +29,8 @@ public class JoystickUI : MonoBehaviour, IHandleJoyStickDirection
 
     public void OnDirectionChanged(Vector2 direction)
     {
-        //Debug.Log($"Joystick: {_joystick}, Direction: {direction}, Magnitude: { direction.magnitude }");
-        Vector2 offset = direction * _joystickRadius;
-        _innerCircle.localPosition = offset;
+        Vector2 innerJoystickLocalPos = direction * _joystickRadius;
+        _innerCircle.localPosition = innerJoystickLocalPos;
     }
 
     public void OnDirectionEnded()

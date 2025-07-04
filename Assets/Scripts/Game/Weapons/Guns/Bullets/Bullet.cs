@@ -1,4 +1,5 @@
 ﻿using Core;
+using System;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
@@ -8,14 +9,21 @@ public class Bullet : MonoBehaviour
     private float _lifeTime = 3f;
 
     [SerializeField] 
-    private int _damage = 10;
-
-    [SerializeField] 
     private GameObject _hitEffectPrefab;
+
+    private Vector3 _direction;
+
+    private GunData _currentWeapon;
 
     private void Start()
     {
         Destroy(gameObject, _lifeTime);
+    }
+
+    public void Initialize(Vector3 direction, GunData currentWeapon)
+    {
+        _direction = direction;
+        _currentWeapon = currentWeapon;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -23,7 +31,7 @@ public class Bullet : MonoBehaviour
         var damageable = collision.collider.GetComponent<ITakeDamage>();
         if (damageable != null)
         {
-            damageable.TakeDamage(_damage);
+            damageable.TakeDamage(_currentWeapon.Damage);
         }
 
         if (_hitEffectPrefab != null)
@@ -32,10 +40,5 @@ public class Bullet : MonoBehaviour
         }
 
         Destroy(gameObject);
-    }
-
-    public void SetDamage(int damage)
-    {
-        _damage = damage;
     }
 }
