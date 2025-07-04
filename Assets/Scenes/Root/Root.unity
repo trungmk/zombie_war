@@ -1642,7 +1642,6 @@ GameObject:
   - component: {fileID: 1742960530}
   - component: {fileID: 1742960531}
   - component: {fileID: 1742960533}
-  - component: {fileID: 1742960534}
   - component: {fileID: 1742960532}
   m_Layer: 0
   m_Name: Cinemachine Camera
@@ -1721,7 +1720,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7362d5a2f8ea3347bfcc808a1e9290e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FocusTarget: 1
+  FocusTarget: 3
   CustomTarget: {fileID: 0}
   FocusDepthOffset: 0
   Damping: 0.2
@@ -1738,25 +1737,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TrackerSettings:
-    BindingMode: 0
+    BindingMode: 3
     PositionDamping: {x: 1, y: 1, z: 1}
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
-  FollowOffset: {x: 0, y: 0, z: -10}
---- !u!114 &1742960534
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1742960529}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e8b78ac948f05a46a6d8339a503172b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LookAtOffset: {x: 0, y: 0, z: 0}
+  FollowOffset: {x: -2, y: 3.5, z: -2}
 --- !u!1 &1933410605
 GameObject:
   m_ObjectHideFlags: 0
