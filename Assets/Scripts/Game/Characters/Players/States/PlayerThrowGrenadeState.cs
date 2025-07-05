@@ -5,7 +5,7 @@ public class PlayerThrowGrenadeState : PlayerStateBase
     private float _grenadeTimer;
     private float _grenadeDuration = 0.5f;
 
-    public PlayerThrowGrenadeState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
+    public PlayerThrowGrenadeState(Player player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
     public override void Enter()
     {

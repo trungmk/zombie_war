@@ -4,7 +4,7 @@ public class PlayerMoveState : PlayerStateBase
 {
     private Vector3 _direction;
 
-    public PlayerMoveState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
+    public PlayerMoveState(Player player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
     public override void HandleInput(PlayerInputData input)
     {

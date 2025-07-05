@@ -1,0 +1,75 @@
+﻿using System.Collections;
+using UnityEngine;
+using Core;
+
+public class GrenadeWeapon : Weapon
+{
+    [SerializeField]
+    private GrenadeWeaponData _grenadeData;
+
+    [SerializeField]
+    private LayerMask _layerMask;
+
+    [SerializeField]
+    private PooledMono _pooledMono;
+
+    private Rigidbody _rigidbody;
+
+    public GrenadeWeaponData GrenadeData => _grenadeData;
+
+    private void Awake()
+    {
+        WeaponType = WeaponType.Grenade;
+        _rigidbody = GetComponent<Rigidbody>();
+    }
+
+    public override void Fire(Vector3 direction)
+    {
+        if (_grenadeData == null)
+        {
+            return;
+        } 
+            
+        if (_rigidbody != null)
+        {
+            Vector3 throwDir = direction.normalized * _grenadeData.ThrowForce;
+            _rigidbody.AddForce(throwDir, ForceMode.VelocityChange);
+        }
+
+        StartCoroutine(GrenadeFuseCoroutine());
+    }
+
+    private IEnumerator GrenadeFuseCoroutine()
+    {
+        yield return new WaitForSeconds(_grenadeData.CountDownTime);
+            
+
+        if (_grenadeData.ExplosionEffect != null)
+        {
+            Instantiate(_grenadeData.ExplosionEffect, transform.position, Quaternion.identity);
+        }
+
+        if (_grenadeData.ExplosionSound != null)
+        {
+            AudioSource.PlayClipAtPoint(_grenadeData.ExplosionSound, transform.position);
+        }
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, _grenadeData.ExplosionRadius, _layerMask);
+        foreach (var hit in colliders)
+        {
+            var damageable = hit.GetComponent<ITakeDamage>();
+            if (damageable != null)
+            {
+                damageable.TakeDamage(_grenadeData.Damage);
+            }
+
+            var rb = hit.attachedRigidbody;
+            if (rb != null)
+            {
+                rb.AddExplosionForce(_grenadeData.ExplosionForce, transform.position, _grenadeData.ExplosionRadius);
+            }
+        }
+
+        ObjectPooling.Instance.ReturnToPool(_pooledMono.gameObject);
+    }
+}

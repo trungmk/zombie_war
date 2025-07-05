@@ -2,7 +2,7 @@
 
 public class PlayerMoveAndShootState : PlayerStateBase
 {
-    public PlayerMoveAndShootState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
+    public PlayerMoveAndShootState(Player player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
     public override void HandleInput(PlayerInputData input)
     {

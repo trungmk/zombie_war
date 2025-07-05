@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class Player : MonoBehaviour
 {
     public PlayerInputHandler InputHandler;
 
@@ -12,18 +12,19 @@ public class PlayerController : MonoBehaviour
 
     public ShootingComponent Shooting;
 
-    public Transform GrenadeThrowPoint;
+    public HealthComponent Health;
+
+    public GrenadeComponent Grenade;
 
     public Transform WeaponTransform;
 
+    public PlayerData PlayerData;
+
     private void Start()
     {
+        Health.Setup(PlayerData.MaxHealth);
+        Shooting.Setup(WeaponTransform);
+        Grenade.Setup();
         StateMachine.ChangeState(PlayerState.Idle);
-    }
-
-    private void Update()
-    {
-        var input = InputHandler.GetInputData();
-        StateMachine.HandleInput(input);
     }
 }

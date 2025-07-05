@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Weapon", menuName = "Game/Weapon Data")]
-public class GunData : ScriptableObject
+[CreateAssetMenu(fileName = "New ProjectileWeaponData", menuName = "Game/Projectile Weapon Data")]
+public class ProjectileWeaponData : ScriptableObject
 {
     public string WeaponName;
 
-    public GunType GunType;
+    public ProjectileWeaponType GunType;
 
     public float Damage = 25f;
 
@@ -25,9 +25,9 @@ public class GunData : ScriptableObject
 
     public GameObject BulletPrefab;
 
-    public ParticleSystem HitEffect;
-
     public AudioClip ShootSound;
 
     public AudioClip ReloadSound;
+
+    public ParticleSystem MuzzleFlash;
 }

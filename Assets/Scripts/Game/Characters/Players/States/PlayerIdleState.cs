@@ -2,7 +2,7 @@
 
 public class PlayerIdleState : PlayerStateBase
 {
-    public PlayerIdleState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
+    public PlayerIdleState(Player player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
     public override void Enter()
     {

@@ -5,7 +5,7 @@ public class PlayerShootState : PlayerStateBase
     private float _shootTimer;
     private float _shootDuration = 0.2f;
 
-    public PlayerShootState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
+    public PlayerShootState(Player player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
     public override void Enter()
     {

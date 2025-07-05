@@ -72,6 +72,16 @@ public class InGamePanel : PanelView, ITouchTarget
         _righttJoystick.transform.localPosition = _rightJoystickOriginPosition.localPosition;
     }
 
+    public void SwapWeaponButton()
+    {
+
+    }   
+    
+    public void UseGrenadeButton()
+    {
+
+    }    
+
     public void SetActive(bool active)
     {
         

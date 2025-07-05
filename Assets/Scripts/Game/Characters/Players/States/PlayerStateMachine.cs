@@ -5,7 +5,7 @@ public class PlayerStateMachine : MonoBehaviour
     public PlayerState CurrentStateType { get; private set; }
 
     private PlayerStateBase _currentState;
-    private PlayerController _player;
+    private Player _player;
 
     // States
     private PlayerIdleState _idleState;
@@ -18,7 +18,7 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void Awake()
     {
-        _player = GetComponent<PlayerController>();
+        _player = GetComponent<Player>();
         _idleState = new PlayerIdleState(_player, this);
         _moveState = new PlayerMoveState(_player, this);
         _shootState = new PlayerShootState(_player, this);
@@ -82,11 +82,15 @@ public class PlayerStateMachine : MonoBehaviour
 
     private void Update()
     {
+        var input = _player.InputHandler.GetInputData();
+        HandleInput(input);
+
         if (_currentState == null)
         {
             return;
         }
 
+        
         _currentState.Update();
     }
 

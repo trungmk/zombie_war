@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     private JoyStickHandler _joystickHandler;
 
     [SerializeField]
-    private PlayerController _playerControllerPrefab;
+    private Player _playerControllerPrefab;
 
     [SerializeField]
     private Transform _playerSpawnPosition;
@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
-        PlayerController playerGO = Instantiate(_playerControllerPrefab);
+        Player playerGO = Instantiate(_playerControllerPrefab);
         playerGO.transform.position = _playerSpawnPosition.position;
         playerGO.transform.rotation = Quaternion.identity;
         playerGO.transform.SetParent(_playerHolder);

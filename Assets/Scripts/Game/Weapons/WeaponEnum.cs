@@ -1,16 +1,18 @@
 ﻿public enum WeaponType
 {
-    Gun = 0,
+    Projectile = 0,
     Grenade
 }
 
-public enum GunType
+public enum ProjectileWeaponType : int
 {
-    AK47 = 0,
-    Shotgun
+    None = 0,
+    AK47 = 1,
+    Shotgun = 2
 }
 
-public enum GrenadeType
+public enum GrenadeWeaponType : int
 {
-    Frag = 0
+    None = 0,
+    Frag
 }

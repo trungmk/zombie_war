@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class MovementComponent : MonoBehaviour
+public class MovementComponent : BaseComponent
 {
     [SerializeField]
     private Rigidbody _rigidbody;

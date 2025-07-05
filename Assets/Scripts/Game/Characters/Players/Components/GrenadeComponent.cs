@@ -1,169 +1,150 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 
-public class GrenadeComponent : MonoBehaviour
+public class GrenadeComponent : BaseComponent
 {
-    [Header("Grenade Settings")]
-    [SerializeField] private GrenadeData _currentGrenadeData;
-    [SerializeField] private Transform _throwPoint;
-    [SerializeField] private LayerMask _damageableLayers = -1;
+    private GrenadeWeapon _grenadeWeapon;
 
-    [Header("UI Indicator")]
-    [SerializeField] private LineRenderer _trajectoryLine;
-    [SerializeField] private int _trajectoryPoints = 30;
+    [SerializeField] 
+    private Transform throwPoint;
 
-    // Events
-    public System.Action<int> OnGrenadeCountChanged;
-    public System.Action OnGrenadeThrown;
+    [SerializeField] 
+    private int grenadeCount = 3;
 
-    private AudioSource _audioSource;
-    private bool _isAiming = false;
+    [SerializeField] 
+    private LayerMask damageableLayers = -1;
 
-    //private void Awake()
-    //{
-    //    _audioSource = GetComponent<AudioSource>();
+    public event Action<int> OnGrenadeCountChanged;
+    public event Action OnGrenadeThrown;
 
-    //    if (_trajectoryLine != null)
-    //    {
-    //        _trajectoryLine.enabled = false;
-    //    }
-    //}
+    public int GrenadeCount => grenadeCount;
 
-    //public void StartAiming(Vector2 aimDirection)
-    //{
-    //    if (!CanThrowGrenade()) return;
+    private bool isAiming = false;
 
-    //    _isAiming = true;
-    //    if (_trajectoryLine != null)
-    //    {
-    //        _trajectoryLine.enabled = true;
-    //        UpdateTrajectoryPreview(aimDirection);
-    //    }
-    //}
+    private GrenadeWeaponData _grenadeWeaponData;
 
-    //public void UpdateAiming(Vector2 aimDirection)
-    //{
-    //    if (!_isAiming) return;
+    private void Start()
+    {
+        WeaponManager.Instance.OnGrenadeWeaponChanged += SetGrenadeData;
+    }
 
-    //    if (_trajectoryLine != null)
-    //    {
-    //        UpdateTrajectoryPreview(aimDirection);
-    //    }
-    //}
+    public void Setup()
+    {
+        SetGrenadeData(WeaponManager.Instance.CurrentGrenadeWeapon);
+    }
 
-    //public void ThrowGrenade(Vector2 aimDirection)
-    //{
-    //    if (!CanThrowGrenade()) return;
+    public void SetGrenadeData(GrenadeWeapon grenadeWeapon)
+    {
+        _grenadeWeapon = grenadeWeapon;
+        _grenadeWeaponData = grenadeWeapon.GrenadeData;
+    }
 
-    //    _isAiming = false;
-    //    if (_trajectoryLine != null)
-    //    {
-    //        _trajectoryLine.enabled = false;
-    //    }
+    public void SetGrenadeCount(int count)
+    {
+        grenadeCount = count;
+        OnGrenadeCountChanged?.Invoke(grenadeCount);
+    }
 
-    //    // Use grenade from inventory
-    //    if (_playerStats != null && !_playerStats.UseGrenade())
-    //    {
-    //        return;
-    //    }
+    public bool CanThrowGrenade()
+    {
+        return _grenadeWeapon != null && grenadeCount > 0 && throwPoint != null;
+    }
 
-    //    // Calculate throw direction and force
-    //    Vector3 throwDirection = new Vector3(aimDirection.x, 0.3f, aimDirection.y).normalized;
-    //    Vector3 throwPosition = _throwPoint != null ? _throwPoint.position : transform.position + Vector3.up;
+    public void ThrowGrenade(Vector2 aimDirection)
+    {
+        if (!CanThrowGrenade())
+        {
+            return;
+        }
 
-    //    // Create grenade projectile
-    //    GameObject grenadeObj = CreateGrenadeProjectile(throwPosition, throwDirection);
+        isAiming = false;
 
-    //    // Play pin pull sound
-    //    if (_audioSource && _currentGrenadeData.pinPullSound)
-    //    {
-    //        _audioSource.PlayOneShot(_currentGrenadeData.pinPullSound);
-    //    }
+        grenadeCount--;
+        OnGrenadeCountChanged?.Invoke(grenadeCount);
 
-    //    OnGrenadeThrown?.Invoke();
-    //    OnGrenadeCountChanged?.Invoke(_playerStats.BaseData.grenades);
-    //}
+        Vector3 throwDir = new Vector3(aimDirection.x, 0.3f, aimDirection.y).normalized;
+        Vector3 spawnPos = throwPoint.position;
 
-    //private GameObject CreateGrenadeProjectile(Vector3 position, Vector3 direction)
-    //{
-    //    // Create grenade GameObject
-    //    GameObject grenadeObj = new GameObject("Grenade");
-    //    grenadeObj.transform.position = position;
+        GameObject grenadeObj = CreateGrenadeProjectile(spawnPos, throwDir);
 
-    //    // Add components
-    //    var rigidbody = grenadeObj.AddComponent<Rigidbody>();
-    //    var collider = grenadeObj.AddComponent<SphereCollider>();
-    //    collider.radius = 0.1f;
+        if (_grenadeWeaponData.PinPullSound != null)
+        {
+            AudioSource.PlayClipAtPoint(_grenadeWeaponData.PinPullSound, spawnPos);
+        }
 
-    //    // Add grenade projectile component
-    //    var projectile = grenadeObj.AddComponent<GrenadeProjectile>();
-    //    projectile.Initialize(_currentGrenadeData, _damageableLayers);
+        OnGrenadeThrown?.Invoke();
+    }
 
-    //    // Apply throw force
-    //    Vector3 force = direction * _currentGrenadeData.throwForce;
-    //    rigidbody.AddForce(force, ForceMode.VelocityChange);
-    //    rigidbody.AddTorque(Random.insideUnitSphere * 5f, ForceMode.VelocityChange);
+    private GameObject CreateGrenadeProjectile(Vector3 position, Vector3 direction)
+    {
+        GameObject grenadeObj;
+        if (_grenadeWeapon != null && _grenadeWeaponData.ExplosionEffect != null)
+        {
+            grenadeObj = Instantiate(_grenadeWeaponData.ExplosionEffect, position, Quaternion.identity);
+        }
+        else
+        {
+            grenadeObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            grenadeObj.transform.position = position;
+            grenadeObj.transform.localScale = Vector3.one * 0.2f;
+        }
 
-    //    return grenadeObj;
-    //}
+        var rb = grenadeObj.GetComponent<Rigidbody>();
+        rb = grenadeObj.GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            rb = grenadeObj.AddComponent<Rigidbody>();
+        }
+            
 
-    //private void UpdateTrajectoryPreview(Vector2 aimDirection)
-    //{
-    //    Vector3 throwDirection = new Vector3(aimDirection.x, 0.3f, aimDirection.y).normalized;
-    //    Vector3 startPosition = _throwPoint != null ? _throwPoint.position : transform.position + Vector3.up;
-    //    Vector3 velocity = throwDirection * _currentGrenadeData.throwForce;
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        rb.mass = 0.5f;
 
-    //    Vector3[] points = CalculateTrajectory(startPosition, velocity, _trajectoryPoints);
+        Vector3 force = direction * _grenadeWeaponData.ThrowForce;
+        rb.AddForce(force, ForceMode.VelocityChange);
+        rb.AddTorque(UnityEngine.Random.insideUnitSphere * 5f, ForceMode.VelocityChange);
 
-    //    _trajectoryLine.positionCount = points.Length;
-    //    _trajectoryLine.SetPositions(points);
-    //}
+        StartCoroutine(GrenadeFuseCoroutine(grenadeObj));
 
-    //private Vector3[] CalculateTrajectory(Vector3 startPos, Vector3 velocity, int steps)
-    //{
-    //    Vector3[] points = new Vector3[steps];
-    //    float timeStep = 0.1f;
+        return grenadeObj;
+    }
 
-    //    for (int i = 0; i < steps; i++)
-    //    {
-    //        float time = i * timeStep;
-    //        points[i] = startPos + velocity * time + 0.5f * Physics.gravity * time * time;
+    private IEnumerator GrenadeFuseCoroutine(GameObject grenadeObj)
+    {
+        yield return new WaitForSeconds(_grenadeWeaponData.CountDownTime);
 
-    //        // Stop trajectory if it hits the ground
-    //        if (points[i].y <= 0.1f)
-    //        {
-    //            points[i].y = 0.1f;
-    //            System.Array.Resize(ref points, i + 1);
-    //            break;
-    //        }
-    //    }
+        if (grenadeObj == null)
+        {
+            yield break;
+        }
 
-    //    return points;
-    //}
+        if (_grenadeWeaponData.ExplosionEffect != null)
+        {
+            Instantiate(_grenadeWeaponData.ExplosionEffect, grenadeObj.transform.position, Quaternion.identity);
+        }
 
-    //public bool CanThrowGrenade()
-    //{
-    //    return _currentGrenadeData != null &&
-    //           _playerStats != null &&
-    //           _playerStats.BaseData.grenades > 0;
-    //}
+        if (_grenadeWeaponData.ExplosionSound != null)
+        {
+            AudioSource.PlayClipAtPoint(_grenadeWeaponData.ExplosionSound, grenadeObj.transform.position);
+        }
 
-    //public void SetGrenadeData(GrenadeData grenadeData)
-    //{
-    //    _currentGrenadeData = grenadeData;
-    //}
+        Collider[] colliders = Physics.OverlapSphere(grenadeObj.transform.position, _grenadeWeaponData.ExplosionRadius, damageableLayers);
+        foreach (var hit in colliders)
+        {
+            ITakeDamage damageable = hit.GetComponent<ITakeDamage>();
+            if (damageable != null)
+            {
+                damageable.TakeDamage(_grenadeWeaponData.Damage);
+            }    
 
-    //public int GetGrenadeCount()
-    //{
-    //    return _playerStats?.BaseData.grenades ?? 0;
-    //}
+            Rigidbody rb = hit.attachedRigidbody;
+            if (rb != null)
+            {
+                rb.AddExplosionForce(_grenadeWeaponData.ExplosionForce, grenadeObj.transform.position, _grenadeWeaponData.ExplosionRadius);
+            }
+        }
 
-    //public void StopAiming()
-    //{
-    //    _isAiming = false;
-    //    if (_trajectoryLine != null)
-    //    {
-    //        _trajectoryLine.enabled = false;
-    //    }
-    //}
+        Destroy(grenadeObj);
+    }
 }

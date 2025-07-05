@@ -2,7 +2,7 @@
 
 public class PlayerDieState : PlayerStateBase
 {
-    public PlayerDieState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
+    public PlayerDieState(Player player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
     public override void Enter()
     {

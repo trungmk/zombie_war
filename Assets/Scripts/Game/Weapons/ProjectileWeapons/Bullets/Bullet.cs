@@ -13,14 +13,14 @@ public class Bullet : MonoBehaviour
 
     private Vector3 _direction;
 
-    private GunData _currentWeapon;
+    private ProjectileWeaponData _currentWeapon;
 
     private void Start()
     {
         Destroy(gameObject, _lifeTime);
     }
 
-    public void Initialize(Vector3 direction, GunData currentWeapon)
+    public void Initialize(Vector3 direction, ProjectileWeaponData currentWeapon)
     {
         _direction = direction;
         _currentWeapon = currentWeapon;
