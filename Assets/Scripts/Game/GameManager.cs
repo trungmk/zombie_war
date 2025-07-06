@@ -1,3 +1,4 @@
+using Core;
 using System;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -48,7 +49,7 @@ public class GameManager : MonoBehaviour
             _joystickHandler.RegisterHandleJoyStickDirection(Joystick.Right, playerInputHandler.RightJoyStick);
         }
 
-        
+        InGamePanel inGamePanel = UIManager.Instance.GetCache<InGamePanel>();
     }
 
     private void OnWaveStarted(int obj)

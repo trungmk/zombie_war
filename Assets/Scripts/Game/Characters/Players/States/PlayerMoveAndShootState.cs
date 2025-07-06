@@ -16,7 +16,7 @@ public class PlayerMoveAndShootState : PlayerStateBase
             player.Shooting.StartAutoShooting();
         }
 
-        player.AnimationController.SetIsFire();
+        player.AnimationController.SetIsFire(true);
         player.AnimationController.SetWeaponType((int)WeaponManager.Instance.CurrentProjectileWeapon.ProjectileWeaponType);
     }
 
@@ -43,6 +43,7 @@ public class PlayerMoveAndShootState : PlayerStateBase
 
     public override void Exit()
     {
+        player.AnimationController.SetIsFire(false);
         player.Shooting.StopShooting();
         player.AnimationController.SetWeaponType(0);
     }

@@ -1,7 +1,8 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Animations.Rigging;
 
-public class Player : BaseCharacter
+public class Player : BaseCharacter, ITakeDamage
 {
     public PlayerInputHandler InputHandler;
 
@@ -26,9 +27,28 @@ public class Player : BaseCharacter
     private void Start()
     {
         Movement.Setup(PlayerData.MoveSpeed, PlayerData.RotationSpeed);
-        Health.Setup(PlayerData.MaxHealth);
         Shooting.Setup(this);
         Grenade.Setup();
+
+        Health.Setup(PlayerData.MaxHealth);
+        Health.OnHealthChanged = Handle_OnHealthChanged;
+        Health.OnDied = Handle_OnDied;
+
         StateMachine.ChangeState(PlayerState.Idle);
+    }
+
+    private void Handle_OnDied()
+    {
+        Debug.Log("Player Died");
+    }
+
+    private void Handle_OnHealthChanged(int currentHealth, int maxHealth)
+    {
+        
+    }
+
+    public void TakeDamage(int damageAmount)
+    {
+        Health.TakeDamage(damageAmount);
     }
 }

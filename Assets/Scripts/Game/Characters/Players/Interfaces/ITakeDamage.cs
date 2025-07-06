@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 public interface ITakeDamage
 {
-    void TakeDamage(float damageAmount);
+    void TakeDamage(int damageAmount);
 }

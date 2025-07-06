@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 6692443543596753361}
   - component: {fileID: 6554091333428376070}
   - component: {fileID: 5458910247334523862}
+  - component: {fileID: 40073617265827349}
   m_Layer: 0
   m_Name: Player_1
   m_TagString: Untagged
@@ -79,7 +80,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2845983099858544422}
   serializedVersion: 4
-  m_Mass: 10
+  m_Mass: 20
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -96,7 +97,7 @@ Rigidbody:
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 84
+  m_Constraints: 116
   m_CollisionDetection: 0
 --- !u!136 &8150561235718124629
 CapsuleCollider:
@@ -167,6 +168,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7e2be4910993b743a55f178c066bb07, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &40073617265827349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2845983099858544422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5aede2fb29d1e6746a6f760e58a2a4ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _enableEditorInput: 1
+  _showDebugInfo: 1
 --- !u!1 &3146057001088451023
 GameObject:
   m_ObjectHideFlags: 0
@@ -625,13 +640,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6261325185810892016}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.454, y: 1.427, z: 1.24}
+  m_LocalRotation: {x: 0, y: 0.026176924, z: 0, w: 0.99965733}
+  m_LocalPosition: {x: 0.391, y: 1.38, z: 0.961}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4394461995197689273}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 3, z: 0}
 --- !u!114 &6635121990545928125
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -17,8 +17,7 @@ public class WaveData : ScriptableObject
 [System.Serializable]
 public class ZombieSpawnData
 {
-    public GameObject zombiePrefab;
-    [Range(0f, 1f)]
-    public float spawnProbability = 1f;
+    public EnemyType enemyType;
+
     public int maxCount = 5;
 }

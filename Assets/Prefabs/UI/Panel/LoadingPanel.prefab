@@ -85,11 +85,23 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 7511726833091870422}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3279034603514155841}
+        m_TargetAssemblyTypeName: LoadingPanel, Assembly-CSharp
+        m_MethodName: OnTapToPlay_Button
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &7511726833091870422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -198,7 +210,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &301352845655952424
 RectTransform:
   m_ObjectHideFlags: 0
@@ -382,6 +394,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseBlackImage: 0
+  _tapToPlayText: {fileID: 3175745503532194579}
+  _tapToPlayButton: {fileID: 2031585214041462241}
 --- !u!1 &8549857872200741546
 GameObject:
   m_ObjectHideFlags: 0

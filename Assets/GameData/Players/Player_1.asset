@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Player_1
   m_EditorClassIdentifier: 
   MaxHealth: 100
-  MoveSpeed: 80
-  RotationSpeed: 270
+  MoveSpeed: 120
+  RotationSpeed: 10
   MaxGrenades: 5

@@ -1,36 +1,51 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Core;
+using Cysharp.Threading.Tasks;
+using MEC;
+using System;
 
 public class WaveSpawner : MonoBehaviour
 {
     public int WaveIndex { get; private set; }
     public bool IsCompleted { get; private set; }
 
-    public System.Action<GameObject> OnZombieSpawned;
-    public System.Action OnWaveCompleted;
+    public Action<GameObject> OnZombieSpawned;
+
+    public Action OnWaveCompleted;
 
     private WaveData _waveData;
+
     private Transform[] _spawnPoints;
-    private float _difficultyMultiplier;
+
     private float _spawnTimer;
+
     private int _zombiesSpawned;
+
     private bool _spawningActive = true;
 
-    public void Initialize(WaveData waveData, Transform[] spawnPoints, float difficultyMultiplier)
+    private Dictionary<EnemyType, int> _spawnedCountByType = new Dictionary<EnemyType, int>();
+
+    public void Initialize(WaveData waveData, Transform[] spawnPoints)
     {
         _waveData = waveData;
         _spawnPoints = spawnPoints;
-        _difficultyMultiplier = difficultyMultiplier;
         _spawnTimer = 0f;
         _zombiesSpawned = 0;
         IsCompleted = false;
         WaveIndex = transform.GetSiblingIndex();
 
-        StartCoroutine(SpawnWave());
+        _spawnedCountByType.Clear();
+        foreach (var zombieType in _waveData.zombieTypes)
+        {
+            _spawnedCountByType[zombieType.enemyType] = 0;
+        }
+
+        Timing.RunCoroutine(SpawnWave());
     }
 
-    private IEnumerator SpawnWave()
+    private IEnumerator<float> SpawnWave()
     {
         float waveEndTime = Time.time + _waveData.waveDuration;
 
@@ -38,106 +53,123 @@ public class WaveSpawner : MonoBehaviour
         {
             if (_spawnTimer <= 0f)
             {
-                SpawnZombie();
-                _spawnTimer = _waveData.spawnInterval / _difficultyMultiplier; // Faster spawning with higher difficulty
+                SpawnZombieAsync().Forget();
+                _spawnTimer = _waveData.spawnInterval;
             }
 
             _spawnTimer -= Time.deltaTime;
-            yield return null;
+            yield return Timing.WaitForOneFrame;
         }
 
         CompleteWave();
     }
 
-    private void SpawnZombie()
+    private async UniTaskVoid SpawnZombieAsync()
     {
-        if (_spawnPoints.Length == 0 || _waveData.zombieTypes.Length == 0) return;
+        if (_spawnPoints.Length == 0 || _waveData.zombieTypes.Length == 0)
+        {
+            return;
+        }
 
-        // Choose zombie type based on probability
         ZombieSpawnData chosenZombieData = ChooseZombieType();
-        if (chosenZombieData?.zombiePrefab == null) return;
 
-        // Choose spawn point
-        Transform spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
+        if (chosenZombieData == null)
+        {
+            return;
+        }
+
+        Transform spawnPoint = _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Length)];
         Vector3 spawnPosition = GetValidSpawnPosition(spawnPoint.position);
 
-        // Spawn zombie
-        GameObject zombie = Instantiate(chosenZombieData.zombiePrefab, spawnPosition, spawnPoint.rotation);
+        string enemyAddressName = GetEnemyAddressName(chosenZombieData.enemyType);
 
-        // Apply wave-specific scaling
-        ApplyWaveScaling(zombie);
+        try
+        {
+            GameObject enemy = await ObjectPooling.Instance.Get(enemyAddressName, PoolItemType.Enemy);
 
-        _zombiesSpawned++;
-        OnZombieSpawned?.Invoke(zombie);
+            if (enemy != null)
+            {
+                enemy.transform.position = spawnPosition;
+                enemy.transform.rotation = Quaternion.identity;
+
+                var enemyComponent = enemy.GetComponent<Enemy>();
+                if (enemyComponent != null)
+                {
+                    InGamePanel inGamePanel = UIManager.Instance.GetCache<InGamePanel>();
+                    if(inGamePanel != null)
+                    {
+                        inGamePanel.RegisterEnemy(enemyComponent);
+                    }
+                }
+
+                _zombiesSpawned++;
+                _spawnedCountByType[chosenZombieData.enemyType]++;
+
+                OnZombieSpawned?.Invoke(enemy);
+
+                Debug.Log($"Spawned {chosenZombieData.enemyType} at {spawnPosition}. Total spawned: {_zombiesSpawned}");
+            }
+            else
+            {
+                Debug.LogError($"Failed to spawn enemy: {enemyAddressName}");
+            }
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Error spawning enemy {enemyAddressName}: {e.Message}");
+        }
+    }
+
+    private string GetEnemyAddressName(EnemyType enemyType)
+    {
+        return enemyType switch
+        {
+            EnemyType.ZombieLight => "Zombie_Light",
+            _ => "Zombie_Light" // Default fallback
+        };
     }
 
     private ZombieSpawnData ChooseZombieType()
     {
-        float totalProbability = 0f;
         List<ZombieSpawnData> availableTypes = new List<ZombieSpawnData>();
 
-        // Filter available types and calculate total probability
         foreach (var zombieType in _waveData.zombieTypes)
         {
-            if (zombieType.maxCount <= 0 || GetSpawnedCount(zombieType) < zombieType.maxCount)
+            int currentCount = _spawnedCountByType.GetValueOrDefault(zombieType.enemyType, 0);
+            if (zombieType.maxCount <= 0 || currentCount < zombieType.maxCount)
             {
                 availableTypes.Add(zombieType);
-                totalProbability += zombieType.spawnProbability;
             }
         }
 
-        if (availableTypes.Count == 0) return null;
-
-        // Choose based on probability
-        float randomValue = Random.Range(0f, totalProbability);
-        float currentProbability = 0f;
-
-        foreach (var zombieType in availableTypes)
+        if (availableTypes.Count == 0)
         {
-            currentProbability += zombieType.spawnProbability;
-            if (randomValue <= currentProbability)
-            {
-                return zombieType;
-            }
+            Debug.LogWarning("No available zombie types to spawn (all reached max count)");
+            return null;
         }
 
-        return availableTypes[0]; // Fallback
+        return availableTypes[UnityEngine.Random.Range(0, availableTypes.Count)];
     }
 
     private int GetSpawnedCount(ZombieSpawnData zombieType)
     {
-        // Count how many of this type have been spawned
-        // This is a simplified version - you might want to track this more accurately
-        return 0;
+        return _spawnedCountByType.GetValueOrDefault(zombieType.enemyType, 0);
     }
 
     private Vector3 GetValidSpawnPosition(Vector3 basePosition)
     {
-        Vector2 randomOffset = Random.insideUnitCircle * 2f;
-        Vector3 spawnPosition = basePosition + new Vector3(randomOffset.x, 0, randomOffset.y);
-
-        if (UnityEngine.AI.NavMesh.SamplePosition(spawnPosition, out UnityEngine.AI.NavMeshHit hit, 5f, UnityEngine.AI.NavMesh.AllAreas))
+        for (int i = 0; i < 5; i++)
         {
-            return hit.position;
+            Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * 2f;
+            Vector3 spawnPosition = basePosition + new Vector3(randomOffset.x, 0, randomOffset.y);
+
+            if (UnityEngine.AI.NavMesh.SamplePosition(spawnPosition, out UnityEngine.AI.NavMeshHit hit, 5f, UnityEngine.AI.NavMesh.AllAreas))
+            {
+                return hit.position;
+            }
         }
 
         return basePosition;
-    }
-
-    private void ApplyWaveScaling(GameObject zombie)
-    {
-        //var healthComponent = zombie.GetComponent<HealthComponent>();
-        //if (healthComponent != null)
-        //{
-        //    healthComponent.SetMaxHealth(healthComponent.MaxHealth * _waveData.healthMultiplier * _difficultyMultiplier);
-        //}
-
-        //var zombieController = zombie.GetComponent<ZombieController>();
-        //if (zombieController != null)
-        //{
-        //    zombieController.SetSpeedMultiplier(_waveData.speedMultiplier * _difficultyMultiplier);
-        //    zombieController.SetDamageMultiplier(_waveData.damageMultiplier * _difficultyMultiplier);
-        //}
     }
 
     private void CompleteWave()
@@ -145,10 +177,8 @@ public class WaveSpawner : MonoBehaviour
         IsCompleted = true;
         _spawningActive = false;
 
-        Debug.Log($"Wave completed! Spawned {_zombiesSpawned} zombies");
         OnWaveCompleted?.Invoke();
 
-        // Clean up after a delay
         StartCoroutine(CleanupAfterDelay(5f));
     }
 
@@ -162,10 +192,32 @@ public class WaveSpawner : MonoBehaviour
     {
         _spawningActive = false;
         StopAllCoroutines();
+        Debug.Log($"Wave {WaveIndex} spawning stopped. Spawned {_zombiesSpawned} zombies.");
     }
 
-    internal void Initialize(WaveData waveData, Transform[] spawnPoints)
+    [ContextMenu("Force Complete Wave")]
+    public void ForceCompleteWave()
     {
-        throw new System.NotImplementedException();
+        CompleteWave();
+    }
+
+    [ContextMenu("Spawn One Zombie")]
+    public void SpawnOneZombieTest()
+    {
+        if (_spawningActive)
+        {
+            SpawnZombieAsync().Forget();
+        }
+    }
+
+    // Get current spawn statistics
+    public Dictionary<EnemyType, int> GetSpawnStatistics()
+    {
+        return new Dictionary<EnemyType, int>(_spawnedCountByType);
+    }
+
+    public float GetSpawnProgress()
+    {
+        return _waveData.totalZombies > 0 ? (float)_zombiesSpawned / _waveData.totalZombies : 0f;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelManager : MonoBehaviour
@@ -12,18 +13,24 @@ public class LevelManager : MonoBehaviour
     [SerializeField] 
     private float _spawnRadius = 2f;
 
-    // Events
-    public System.Action<int> OnWaveStarted;
-    public System.Action<int> OnWaveCompleted;
-    public System.Action OnLevelCompleted;
-    public System.Action OnLevelFailed;
+    public Action<int> OnWaveStarted;
 
-    // Private fields
+    public Action<int> OnWaveCompleted;
+
+    public Action OnLevelCompleted;
+
+    public Action OnLevelFailed;
+
     private float _levelTimer;
+
     private int _currentWaveIndex = 0;
+
     private List<WaveSpawner> _activeWaveSpawners = new List<WaveSpawner>();
+
     private bool _levelCompleted = false;
+
     private int _totalZombiesSpawned = 0;
+
     private int _totalZombiesKilled = 0;
 
     // Properties
@@ -67,7 +74,6 @@ public class LevelManager : MonoBehaviour
 
     private void HandleWaveSpawning()
     {
-        // Check for new waves to start
         for (int i = _currentWaveIndex; i < _currentLevelData.waves.Length; i++)
         {
             WaveData wave = _currentLevelData.waves[i];
@@ -87,9 +93,6 @@ public class LevelManager : MonoBehaviour
     {
         WaveData waveData = _currentLevelData.waves[waveIndex];
 
-        Debug.Log($"Starting Wave {waveIndex + 1}: {waveData.totalZombies} zombies");
-
-        // Create wave spawner
         GameObject spawnerObj = new GameObject($"Wave_{waveIndex + 1}_Spawner");
         spawnerObj.transform.SetParent(transform);
 

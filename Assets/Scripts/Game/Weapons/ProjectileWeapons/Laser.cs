@@ -19,7 +19,7 @@ public class Laser : MonoBehaviour
     private Material _laserMaterial;
 
     private LineRenderer _lineRenderer;
-    private readonly RaycastHit[] _raycastHits = new RaycastHit[1];
+    private static readonly RaycastHit[] _raycastHits = new RaycastHit[1];
 
     public bool IsVisible => _isVisible;
     public Vector3 EndPoint { get; private set; }
@@ -64,6 +64,7 @@ public class Laser : MonoBehaviour
         }
 
         float maxDist = customMaxDistance == 0 ? _maxDistance: customMaxDistance;
+        //Vector3 newDir = new Vector3(direction.x, origin.y, direction.z);
         _lineRenderer.SetPosition(0, origin);
         Vector3 endPoint = origin + direction.normalized * maxDist;
         IsHittingTarget = false;
@@ -73,6 +74,7 @@ public class Laser : MonoBehaviour
         {
             RaycastHit hit = _raycastHits[0];
             endPoint = hit.point;
+            endPoint.y = origin.y; 
             IsHittingTarget = true;
         }
 
@@ -134,7 +136,6 @@ public class Laser : MonoBehaviour
             Vector3 end = _lineRenderer.GetPosition(1);
             Gizmos.DrawLine(start, end);
 
-            // Draw hit point
             if (IsHittingTarget)
             {
                 Gizmos.color = Color.yellow;

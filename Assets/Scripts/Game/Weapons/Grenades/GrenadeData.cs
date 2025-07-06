@@ -5,7 +5,7 @@ public class GrenadeWeaponData : ScriptableObject
 {
     public string GrenadeName;
 
-    public float Damage = 80f;
+    public int Damage = 80;
 
     public float ExplosionRadius = 5f;
 

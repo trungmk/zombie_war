@@ -12,11 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b3b3819bd1ba6447a79cd8bee74e317, type: 3}
   m_Name: Wave_1
   m_EditorClassIdentifier: 
-  waveStartTime: 0
-  waveDuration: 30
-  totalZombies: 30
+  waveStartTime: 3
+  waveDuration: 90
+  totalZombies: 25
   spawnInterval: 2
   zombieTypes:
-  - zombiePrefab: {fileID: 0}
-    spawnProbability: 0.3
-    maxCount: 0
+  - enemyType: 0
+    maxCount: 20

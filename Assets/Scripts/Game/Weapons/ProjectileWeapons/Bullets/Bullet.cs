@@ -7,9 +7,6 @@ using UnityEngine;
 public class Bullet : PooledMono
 {
     [SerializeField]
-    private float _lifeTime = 2f;
-
-    [SerializeField]
     private Rigidbody _rigidbody;
 
     [SerializeField]
@@ -19,15 +16,17 @@ public class Bullet : PooledMono
     private ProjectileWeaponData _currentWeapon;
     private float _spawnTime;
     private bool _isInitialized;
+    private float _lifeTime;
 
     private void OnDisable()
     {
-        if (_hitEffect != null)
-        {
-            _hitEffect.gameObject.SetActive(false);
-        }
-
+        DisableHitFX();
         _isInitialized = false;
+    }
+
+    private void OnEnable()
+    {
+        DisableHitFX();
     }
 
     public void Initialize(Vector3 direction, ProjectileWeaponData currentWeapon)
@@ -35,7 +34,7 @@ public class Bullet : PooledMono
         _direction = direction.normalized;
         _currentWeapon = currentWeapon;
         _spawnTime = Time.time;
-        _isInitialized = true;
+        _lifeTime = currentWeapon.LifeTime;
 
         if (_hitEffect != null)
         {
@@ -46,6 +45,8 @@ public class Bullet : PooledMono
         {
             transform.rotation = Quaternion.LookRotation(_direction);
         }
+
+        _isInitialized = true;
     }
 
     private void FixedUpdate()
@@ -62,6 +63,7 @@ public class Bullet : PooledMono
     {
         if (_isInitialized && Time.time - _spawnTime >= _lifeTime)
         {
+            _isInitialized = false;
             ReturnToPool();
         }
     }
@@ -73,7 +75,7 @@ public class Bullet : PooledMono
             return;
         }
 
-        Debug.Log("Hit");
+        Debug.Log($"Bullet hit: {other.name}");
 
         var damageable = other.GetComponent<ITakeDamage>();
         if (damageable != null && _currentWeapon != null)
@@ -87,14 +89,23 @@ public class Bullet : PooledMono
             _hitEffect.Play();
         }
 
+        _isInitialized = false;
         Timing.RunCoroutine(ReturnToObjectPooling());
     }
 
     private IEnumerator<float> ReturnToObjectPooling()
     {
-        yield return Timing.WaitForSeconds(0.3f);
+        yield return Timing.WaitForSeconds(0.1f);
 
-        _isInitialized = false;
+        
         ReturnToPool();
+    }    
+
+    private void DisableHitFX()
+    {
+        if (_hitEffect != null)
+        {
+            _hitEffect.gameObject.SetActive(false);
+        }
     }    
 }

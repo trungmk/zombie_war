@@ -7,7 +7,7 @@ public class ProjectileWeaponData : ScriptableObject
 
     public ProjectileWeaponType GunType;
 
-    public float Damage = 25f;
+    public int Damage = 25;
 
     public float FireRate = 0.15f;
 
@@ -22,6 +22,8 @@ public class ProjectileWeaponData : ScriptableObject
     public int PelletsPerShot = 1;       
 
     public float SpreadAngle = 0f;
+
+    public float LifeTime = 2;
 
     public string BulletName;
 

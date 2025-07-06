@@ -7,9 +7,9 @@ public class HealthComponent : BaseComponent
     public int CurrentHealth { get; private set; }
     public bool IsDead => CurrentHealth <= 0f;
 
-    public event Action<float, float> OnHealthChanged;
+    public Action<int, int> OnHealthChanged;
 
-    public event Action OnDied;
+    public Action OnDied;
 
     public void Setup(int maxHealth)
     {
@@ -20,7 +20,11 @@ public class HealthComponent : BaseComponent
 
     public void TakeDamage(int amount)
     {
-        if (IsDead) return;
+        if (IsDead)
+        {
+            return;
+        } 
+            
         CurrentHealth = Mathf.Max(CurrentHealth - amount, 0);
         OnHealthChanged?.Invoke(CurrentHealth, MaxHealth);
         if (CurrentHealth <= 0f)

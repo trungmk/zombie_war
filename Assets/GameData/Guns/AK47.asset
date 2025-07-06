@@ -19,9 +19,10 @@ MonoBehaviour:
   BulletSpeed: 40
   Range: 50
   IsAutomatic: 1
-  RecoilSpread: 3
+  RecoilSpread: 1
   PelletsPerShot: 1
-  SpreadAngle: 10
+  SpreadAngle: 1
+  LifeTime: 2
   BulletName: Bullet
   ShootSound: {fileID: 0}
   ReloadSound: {fileID: 0}

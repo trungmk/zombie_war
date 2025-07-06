@@ -7,12 +7,12 @@ AvatarMask:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: UpperBody
-  m_Mask: 00000000010000000100000000000000000000000100000001000000010000000100000000000000000000000100000001000000
+  m_Mask: 00000000000000000100000000000000000000000100000001000000010000000100000000000000000000000100000001000000
   m_Elements:
   - m_Path: 
     m_Weight: 1
   - m_Path: FPS_HANDS
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: FPS_HANDS/SK_Miliary_FPS_Arms
     m_Weight: 1
   - m_Path: FPS_HANDS/SK_Miliary_FPS_Arms_Gloves1
@@ -142,24 +142,24 @@ AvatarMask:
   - m_Path: root/pelvis/thigh_r/thigh_twist_01_r
     m_Weight: 1
   - m_Path: SK_Military_Backpack1
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: SK_Military_Backpack1_vest
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: SK_Military_Boots3
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: SK_Military_Cap1
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: SK_Military_Head1
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: SK_Military_Male_Arms1
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: SK_Military_Male_Arms1_Gloves1
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: SK_Military_Pants2
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: SK_Military_Shirt3
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: SK_Military_Vest1
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: SK_Military_Vest1_4
-    m_Weight: 0
+    m_Weight: 1

@@ -112,15 +112,15 @@ public class ProjectileWeapon : Weapon
         switch (_weaponData.GunType)
         {
             case ProjectileWeaponType.AK47:
-                FireSingle(direction);
+                FireSingle(direction).Forget();
                 break;
 
             case ProjectileWeaponType.Shotgun:
-                FireShotgun(direction);
+                FireShotgun(direction).Forget();
                 break;
 
             default:
-                FireSingle(direction);
+                FireSingle(direction).Forget();
                 break;
         }
     }
@@ -156,7 +156,7 @@ public class ProjectileWeapon : Weapon
         }
     }
 
-    private void FireSingle(Vector3 direction)
+    private async UniTaskVoid FireSingle(Vector3 direction)
     {
         Vector3 spreadDirection = direction;
         if (_weaponData.RecoilSpread > 0)
@@ -165,7 +165,8 @@ public class ProjectileWeapon : Weapon
             spreadDirection.z += Random.Range(-_weaponData.RecoilSpread, _weaponData.RecoilSpread) * 0.01f;
         }
 
-        CreateBullet(spreadDirection).Forget();
+        Bullet bullet = await CreateBullet(spreadDirection);
+        bullet.Initialize(direction, _weaponData);
 
         if (_muzzleFlash != null)
         {
@@ -173,12 +174,13 @@ public class ProjectileWeapon : Weapon
         }
     }
 
-    private void FireShotgun(Vector3 direction)
+    private async UniTaskVoid FireShotgun(Vector3 direction)
     {
         for (int i = 0; i < _weaponData.PelletsPerShot; i++)
         {
             Vector3 spreadDirection = CalculateSpreadDirection(direction);
-            CreateBullet(spreadDirection).Forget();
+            Bullet bullet = await CreateBullet(spreadDirection);
+            bullet.Initialize(direction, _weaponData);
         }
 
         if (_muzzleFlash != null)
@@ -196,12 +198,12 @@ public class ProjectileWeapon : Weapon
         return spreadRotation * baseDirection;
     }
 
-    private async UniTaskVoid CreateBullet(Vector3 direction)
+    private async UniTask<Bullet> CreateBullet(Vector3 direction)
     {
         Bullet bullet = await ObjectPooling.Instance.Get<Bullet>(_weaponData.BulletName);
         bullet.transform.position = _firePoint.position;
         bullet.transform.rotation = Quaternion.LookRotation(direction, Vector3.up);
-        bullet.Initialize(direction, _weaponData);
+        return bullet;
     }
 
     private Vector3 ApplyRotationOffset(Vector3 direction)

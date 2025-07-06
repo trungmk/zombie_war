@@ -15,8 +15,18 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 87ac8765932ffd140a4796e2b021efea
   m_SerializeEntries:
+  - m_GUID: 4f07f6d326cf0ea4380790aab5371e9b
+    m_Address: DeathFX
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 99484650f3d23314e8dbd2242bfdc410
     m_Address: Bullet
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c40f035571f257c4b860febdb250d6a6
+    m_Address: Zombie_Light
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
