@@ -10,6 +10,7 @@ public class PlayerMoveAndThrowGrenadeState : PlayerStateBase
     public override void Enter()
     {
         _grenadeTimer = 0f;
+        player.Shooting.StopShooting();
     }
 
     public override void Update()
@@ -19,7 +20,7 @@ public class PlayerMoveAndThrowGrenadeState : PlayerStateBase
 
     public override void HandleInput(PlayerInputData input)
     {
-        player.Movement.Move(new Vector3(input.MovementInput.x, 0, input.MovementInput.y));
+        player.Movement.MoveAndRotate(new Vector3(input.AimingInput.x, 0, input.AimingInput.y));
     }
 
     public override PlayerState? CheckTransitions(PlayerInputData input)
@@ -28,6 +29,7 @@ public class PlayerMoveAndThrowGrenadeState : PlayerStateBase
         {
             if (input.IsMoving)
                 return PlayerState.Move;
+
             else
                 return PlayerState.Idle;
         }

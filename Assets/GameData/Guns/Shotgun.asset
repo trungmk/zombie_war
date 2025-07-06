@@ -15,14 +15,13 @@ MonoBehaviour:
   WeaponName: Shotgun
   GunType: 2
   Damage: 50
-  FireRate: 0.15
-  BulletSpeed: 15
+  FireRate: 0.8
+  BulletSpeed: 40
   Range: 25
-  IsAutomatic: 0
-  RecoilSpread: 2
-  PelletsPerShot: 6
-  SpreadAngle: 20
-  BulletPrefab: {fileID: 0}
+  IsAutomatic: 1
+  RecoilSpread: 5
+  PelletsPerShot: 7
+  SpreadAngle: 10
+  BulletName: Bullet
   ShootSound: {fileID: 0}
   ReloadSound: {fileID: 0}
-  MuzzleFlash: {fileID: 0}

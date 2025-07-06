@@ -9,6 +9,7 @@ public class PlayerHandleJoystick : IHandleJoyStickDirection
 
     public Action<Vector2> OnDirectionChangedEvent;
     public Action OnDirectionEndedEvent;
+    public Action<Vector2> OnStartClickedEvent;
 
     public PlayerHandleJoystick(Joystick joystickType)
     {
@@ -20,7 +21,7 @@ public class PlayerHandleJoystick : IHandleJoyStickDirection
     public void OnDirectionChanged(Vector2 direction)
     {
         Direction = direction;
-        IsActive = direction.sqrMagnitude > 0.01f;
+        IsActive = direction.magnitude > 0.05f;
         OnDirectionChangedEvent?.Invoke(direction);
     }
 
@@ -29,5 +30,14 @@ public class PlayerHandleJoystick : IHandleJoyStickDirection
         Direction = Vector2.zero;
         IsActive = false;
         OnDirectionEndedEvent?.Invoke();
+    }
+
+    public void OnStartClicked(Vector2 direction)
+    {
+        IsActive = true;
+        if (OnStartClickedEvent != null)
+        {
+            OnStartClickedEvent(direction);
+        }
     }
 }

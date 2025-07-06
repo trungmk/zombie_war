@@ -1,4 +1,5 @@
 using Core;
+using System;
 using UnityEngine;
 
 public class InGamePanel : PanelView, ITouchTarget
@@ -21,6 +22,11 @@ public class InGamePanel : PanelView, ITouchTarget
     private JoyStickHandler _joyStickHandler;
 
     private Camera _uiCamera;
+
+    public Action OnSwapWeaponClicked;
+
+    public Action OnUseGrenadeClicked;
+
 
     public bool IsActive => gameObject.activeSelf;
 
@@ -74,12 +80,18 @@ public class InGamePanel : PanelView, ITouchTarget
 
     public void SwapWeaponButton()
     {
-
+        if (OnSwapWeaponClicked != null)
+        {
+            OnSwapWeaponClicked();
+        }
     }   
     
     public void UseGrenadeButton()
     {
-
+        if (OnUseGrenadeClicked != null)
+        {
+            OnUseGrenadeClicked();
+        }
     }    
 
     public void SetActive(bool active)

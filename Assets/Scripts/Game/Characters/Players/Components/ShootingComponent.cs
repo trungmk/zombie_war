@@ -3,53 +3,88 @@ using UnityEngine;
 
 public class ShootingComponent : BaseComponent
 {
-    private float _lastFireTime;
+    [SerializeField]
+    private Rigidbody _rigidbody;
+
+    [SerializeField]
+    private float _directionOffset = 50f;
+
     private ProjectileWeaponData _currentWeaponEquipped;
     private ProjectileWeapon _currentWeapon;
+    private Player _player;
+    private Transform _weaponHoldPoint;
+    private float _rotationSpeed = 360f;
 
-    private Transform _firePoint;
-
-    private void Awake()
+    private void Start()
     {
         WeaponManager.Instance.OnProjectileWeaponChanged += Handle_OnProjectileWeaponChanged;
     }
 
-    public void Setup(Transform firePoint)
+    private void OnDestroy()
     {
-        _firePoint = firePoint;
-        _currentWeapon = WeaponManager.Instance.CurrentProjectileWeapon;
+        WeaponManager.Instance.OnProjectileWeaponChanged -= Handle_OnProjectileWeaponChanged;
+    }
+
+    public void Setup(Player player)
+    {
+        _player = player;
+        _weaponHoldPoint = _player.WeaponTransform;
+        _rotationSpeed = player.PlayerData.RotationSpeed;
+        SetCurrentProjectileWeapon(WeaponManager.Instance.CurrentProjectileWeapon);
     }
 
     private void Handle_OnProjectileWeaponChanged(ProjectileWeapon weapon)
     {
+        SetCurrentProjectileWeapon(weapon);
+        _player.AnimationController.TriggerChangeWeapon();
     }
 
-    public void Shoot(Vector2 aimDirection)
+    private void SetCurrentProjectileWeapon(ProjectileWeapon projectileWeapon)
     {
-        if (!CanShoot())
+        _currentWeapon = projectileWeapon;
+        _currentWeapon.transform.SetParent(_weaponHoldPoint, false);
+        _currentWeapon.transform.localPosition = Vector3.zero;
+        _currentWeapon.transform.localRotation = Quaternion.identity;
+
+        _currentWeapon.Setup();
+        _currentWeaponEquipped = _currentWeapon.WeaponData;
+    }
+
+    public void AutoShoot(Vector3 aimDirection)
+    {
+        _player.Movement.Rotate(aimDirection);
+
+        if (!IsAutoShooting())
         {
-            return;
-        } 
-
-        SpawnBullet(aimDirection);
-
-        _lastFireTime = Time.time;
+            _currentWeapon.StartAutoFiring(_player.transform);
+        }
     }
 
-    private void SpawnBullet(Vector2 aimDirection)
+    public void StartAutoShooting()
     {
-        Vector3 direction = new Vector3(aimDirection.x, 0, aimDirection.y);
-        if (direction.sqrMagnitude < 0.01f) direction = transform.forward;
+        if (_currentWeapon != null && !_currentWeapon.IsFiring)
+        {
+            Debug.Log("Starting auto shooting");
+            _currentWeapon.StartAutoFiring(_player.transform);
+        }
+    }
 
-        GameObject bulletGO = Instantiate(_currentWeaponEquipped.BulletPrefab, _firePoint.position,
-            Quaternion.LookRotation(direction));
+    public void StopShooting()
+    {
+        if (_currentWeapon != null)
+        {
+            Debug.Log("Stopping auto shooting");
+            _currentWeapon.StopToFire();
+        }
+    }
 
-        var bullet = bulletGO.GetComponent<Bullet>();
-        bullet?.Initialize(direction, _currentWeaponEquipped);
+    public bool IsAutoShooting()
+    {
+        return _currentWeapon != null && _currentWeapon.IsFiring;
     }
 
     public bool CanShoot()
     {
-        return Time.time >= _lastFireTime + _currentWeaponEquipped.FireRate;
+        return _currentWeapon != null && _currentWeapon.CanFire();
     }
 }

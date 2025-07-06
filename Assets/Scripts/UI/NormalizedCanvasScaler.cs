@@ -12,7 +12,7 @@ public class NormalizedCanvasScaler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if(CameraManager.Instance.UICamera.IsScaleByHorizontal 
+        if (CameraManager.Instance.UICamera.IsScaleByHorizontal 
             || CameraManager.Instance.UICamera.IsScaleByVertical)
         {
             _canvasScaler.matchWidthOrHeight = 0.2f;

@@ -26,7 +26,7 @@ public class GrenadeComponent : BaseComponent
 
     private void Start()
     {
-        WeaponManager.Instance.OnGrenadeWeaponChanged += SetGrenadeData;
+        WeaponManager.Instance.OnSetupOnGrenadeCompleted += SetGrenadeData;
     }
 
     public void Setup()
@@ -38,6 +38,7 @@ public class GrenadeComponent : BaseComponent
     {
         _grenadeWeapon = grenadeWeapon;
         _grenadeWeaponData = grenadeWeapon.GrenadeData;
+        _grenadeWeapon.gameObject.SetActive(false);
     }
 
     public void SetGrenadeCount(int count)

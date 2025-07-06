@@ -7,4 +7,6 @@ public abstract class Weapon : MonoBehaviour
     public abstract void Fire(Vector3 direction);
 
     public virtual bool CanFire() => true;
+
+    public abstract void StopToFire();
 }

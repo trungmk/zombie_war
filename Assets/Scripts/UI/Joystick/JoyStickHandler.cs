@@ -121,11 +121,20 @@ public class JoyStickHandler : MonoBehaviour, ITouchTarget
         if (!IsActive)
         {
             return;
-        }    
+        }
 
         Joystick joystick = GetJoystickByPosition(inputData.TouchPosition);
         _touchIdToJoystick[inputData.TouchId] = joystick;
         _touchIdToInitialPosition[inputData.TouchId] = inputData.TouchPosition;
+
+        if (_joyStickDirections.TryGetValue(joystick, out var handlers))
+        {
+            Vector2 direction = Vector2.zero;
+            foreach (var handler in handlers)
+            {
+                handler.OnStartClicked(direction);
+            }
+        }
     }
 
     public void TouchedUp(InputData inputData)

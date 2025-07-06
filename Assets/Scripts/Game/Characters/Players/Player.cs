@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using UnityEngine.Animations.Rigging;
 
-public class Player : MonoBehaviour
+public class Player : BaseCharacter
 {
     public PlayerInputHandler InputHandler;
 
@@ -20,10 +21,13 @@ public class Player : MonoBehaviour
 
     public PlayerData PlayerData;
 
+    public Rig Rig;
+
     private void Start()
     {
+        Movement.Setup(PlayerData.MoveSpeed, PlayerData.RotationSpeed);
         Health.Setup(PlayerData.MaxHealth);
-        Shooting.Setup(WeaponTransform);
+        Shooting.Setup(this);
         Grenade.Setup();
         StateMachine.ChangeState(PlayerState.Idle);
     }

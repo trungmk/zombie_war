@@ -1,15 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class WeaponManager : MonoSingleton<WeaponManager>
 {
-    [Header("Projectile Weapons")]
     [SerializeField]
-    private List<ProjectileWeapon> _projectileWeapons = new List<ProjectileWeapon>();
+    private List<ProjectileWeapon> _projectileWeaponsPrefabs;
 
-    [Header("Grenade Weapons")]
     [SerializeField]
-    private List<GrenadeWeapon> _grenadeWeapons = new List<GrenadeWeapon>();
+    private List<GrenadeWeapon> _grenadeWeaponsPrefabs;
 
     [SerializeField]
     private int _startProjectileWeaponIndex = 0;
@@ -17,8 +16,12 @@ public class WeaponManager : MonoSingleton<WeaponManager>
     [SerializeField]
     private int _startGrenadeWeaponIndex = 0;
 
+    [SerializeField]
+    private int maxGrenadeInit = 3;
+
     private int _currentProjectileWeaponIndex = 0;
     private int _currentGrenadeWeaponIndex = 0;
+    private int _remainingGrenadeCount = 0;
 
     private ProjectileWeapon _currentProjectileWeapon;
     private GrenadeWeapon _currentGrenadeWeapon;
@@ -34,11 +37,48 @@ public class WeaponManager : MonoSingleton<WeaponManager>
 
     public int GrenadeWeaponCount => _grenadeWeapons.Count;
 
-    public System.Action<ProjectileWeapon> OnProjectileWeaponChanged;
+    private List<ProjectileWeapon> _projectileWeapons = new List<ProjectileWeapon>();
 
-    public System.Action<GrenadeWeapon> OnGrenadeWeaponChanged;
+    private List<GrenadeWeapon> _grenadeWeapons = new List<GrenadeWeapon>();
+
+    public Action<ProjectileWeapon> OnProjectileWeaponChanged;
+
+    public Action<GrenadeWeapon> OnSetupOnGrenadeCompleted;
+
+    public Action<GrenadeWeapon> UseGrenade;
 
     private void Awake()
+    {
+        for (int i = 0; i < _projectileWeaponsPrefabs.Count; i++)
+        {
+            ProjectileWeapon projectileWeapon = Instantiate(_projectileWeaponsPrefabs[i]);
+            projectileWeapon.gameObject.SetActive(false);
+            projectileWeapon.transform.SetParent(transform, true);
+
+            _projectileWeapons.Add(projectileWeapon);
+        }
+
+        for (int i = 0; i < _grenadeWeaponsPrefabs.Count; i++)
+        {
+            for (int j = 0; j < maxGrenadeInit; j++)
+            {
+                GrenadeWeapon grenadeWeapon = Instantiate(_grenadeWeaponsPrefabs[i]);
+                grenadeWeapon.gameObject.SetActive(false);
+                grenadeWeapon.transform.SetParent(transform, true);
+                grenadeWeapon.OnFireCompleted = Handle_GrenadeFireCompleted;
+
+                _grenadeWeapons.Add(grenadeWeapon);
+            }
+        }
+    }
+
+    private void Handle_GrenadeFireCompleted(GrenadeWeapon grenadeWeapon)
+    {
+        grenadeWeapon.transform.SetParent(transform);
+        grenadeWeapon.gameObject.SetActive(false);
+    }
+
+    public void Init()
     {
         if (_projectileWeapons.Count > 0)
         {
@@ -78,17 +118,6 @@ public class WeaponManager : MonoSingleton<WeaponManager>
         EquipProjectileWeapon(nextIndex);
     }
 
-    public void EquipPreviousProjectileWeapon()
-    {
-        if (_projectileWeapons.Count <= 1)
-        {
-            return;
-        }
-
-        int prevIndex = (_currentProjectileWeaponIndex - 1 + _projectileWeapons.Count) % _projectileWeapons.Count;
-        EquipProjectileWeapon(prevIndex);
-    }
-
     public List<ProjectileWeapon> GetAllProjectileWeapons()
     {
         return _projectileWeapons;
@@ -108,11 +137,11 @@ public class WeaponManager : MonoSingleton<WeaponManager>
 
         _currentGrenadeWeaponIndex = index;
         _currentGrenadeWeapon = _grenadeWeapons[_currentGrenadeWeaponIndex];
-        _currentGrenadeWeapon.gameObject.SetActive(true);
+        _currentGrenadeWeapon.gameObject.SetActive(false);
 
-        if (OnGrenadeWeaponChanged != null)
+        if (OnSetupOnGrenadeCompleted != null)
         {
-            OnGrenadeWeaponChanged(_currentGrenadeWeapon);
+            OnSetupOnGrenadeCompleted(_currentGrenadeWeapon);
         }
     }
 
@@ -127,19 +156,36 @@ public class WeaponManager : MonoSingleton<WeaponManager>
         EquipGrenadeWeapon(nextIndex);
     }
 
-    public void EquipPreviousGrenadeWeapon()
-    {
-        if (_grenadeWeapons.Count <= 1)
-        {
-            return;
-        } 
-            
-        int prevIndex = (_currentGrenadeWeaponIndex - 1 + _grenadeWeapons.Count) % _grenadeWeapons.Count;
-        EquipGrenadeWeapon(prevIndex);
-    }
-
     public List<GrenadeWeapon> GetAllGrenadeWeapons()
     {
         return _grenadeWeapons;
+    }
+
+    public void Handle_EventSwapWeapon()
+    {
+        EquipNextProjectileWeapon();
+    }
+
+    public void Handle_EventUseGrenade()
+    {
+        if (_remainingGrenadeCount <= 0)
+        {
+            return;
+        }
+
+        for (int i = 0; i < _grenadeWeapons.Count; i++)
+        {
+            if (!_grenadeWeapons[i].gameObject.activeSelf  
+               && !_grenadeWeapons[i].gameObject.activeInHierarchy)
+            {
+                _currentGrenadeWeapon = _grenadeWeapons[i];
+            }
+        }
+
+        _remainingGrenadeCount--;
+        if (UseGrenade != null)
+        {
+            UseGrenade(_currentGrenadeWeapon);
+        }
     }
 }

@@ -8,6 +8,7 @@ public class BootingSceneController : SceneController
 {
     public override void OnLoaded()
     {
+        ObjectPooling.Instance.Init(null);
         UIManager.Instance.Show<LoadingPanel>();
         Timing.RunCoroutine(ChangeScene());
     }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 using Core;
+using System;
 
 public class GrenadeWeapon : Weapon
 {
@@ -17,6 +18,10 @@ public class GrenadeWeapon : Weapon
 
     public GrenadeWeaponData GrenadeData => _grenadeData;
 
+    public Action<GrenadeWeapon> OnFireCompleted;
+
+    public bool IsUsing { get; set; }
+
     private void Awake()
     {
         WeaponType = WeaponType.Grenade;
@@ -25,7 +30,7 @@ public class GrenadeWeapon : Weapon
 
     public override void Fire(Vector3 direction)
     {
-        if (_grenadeData == null)
+        if (_grenadeData == null || !IsUsing)
         {
             return;
         } 
@@ -37,6 +42,11 @@ public class GrenadeWeapon : Weapon
         }
 
         StartCoroutine(GrenadeFuseCoroutine());
+    }
+
+    public override void StopToFire()
+    {
+        
     }
 
     private IEnumerator GrenadeFuseCoroutine()
@@ -70,6 +80,9 @@ public class GrenadeWeapon : Weapon
             }
         }
 
-        ObjectPooling.Instance.ReturnToPool(_pooledMono.gameObject);
+        if (OnFireCompleted != null)
+        {
+            OnFireCompleted(this);
+        }
     }
 }

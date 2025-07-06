@@ -31,6 +31,8 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        WeaponManager.Instance.Init();
+
         Player playerGO = Instantiate(_playerControllerPrefab);
         playerGO.transform.position = _playerSpawnPosition.position;
         playerGO.transform.rotation = Quaternion.identity;
@@ -45,6 +47,8 @@ public class GameManager : MonoBehaviour
             _joystickHandler.RegisterHandleJoyStickDirection(Joystick.Left, playerInputHandler.LeftJoyStick);
             _joystickHandler.RegisterHandleJoyStickDirection(Joystick.Right, playerInputHandler.RightJoyStick);
         }
+
+        
     }
 
     private void OnWaveStarted(int obj)

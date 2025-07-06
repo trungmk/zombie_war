@@ -21,13 +21,11 @@ public class ProjectileWeaponData : ScriptableObject
 
     public int PelletsPerShot = 1;       
 
-    public float SpreadAngle = 0f;       
+    public float SpreadAngle = 0f;
 
-    public GameObject BulletPrefab;
+    public string BulletName;
 
     public AudioClip ShootSound;
 
     public AudioClip ReloadSound;
-
-    public ParticleSystem MuzzleFlash;
 }

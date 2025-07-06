@@ -2,48 +2,65 @@
 
 public class PlayerShootState : PlayerStateBase
 {
-    private float _shootTimer;
-    private float _shootDuration = 0.2f;
+    private Vector3 _direction;
 
     public PlayerShootState(Player player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
 
     public override void Enter()
     {
-        _shootTimer = 0f;
-        player.Shooting.Shoot(player.InputHandler.AimInput);
-        player.AnimationController.TriggerShoot();
-    }
+        Debug.Log("Entering Shoot State");
+        if (!player.Shooting.IsAutoShooting())
+        {
+            player.Shooting.StartAutoShooting();
+        }
 
-    public override void Update()
-    {
-        _shootTimer += Time.deltaTime;
+        player.AnimationController.SetIsFire();
+        player.AnimationController.SetWeaponType((int) WeaponManager.Instance.CurrentProjectileWeapon.ProjectileWeaponType);
     }
 
     public override void HandleInput(PlayerInputData input)
     {
+        _direction = new Vector3(input.AimingInput.x, 0, input.AimingInput.y);
+
         if (input.IsMoving)
         {
             stateMachine.ChangeState(PlayerState.MoveAndShoot);
-        }    
+        }
         else if (input.GrenadeTriggered)
         {
             stateMachine.ChangeState(PlayerState.ThrowGrenade);
-        }    
+        }
+    }
+
+    public override void FixedUpdate()
+    {
+        player.Shooting.AutoShoot(_direction);
     }
 
     public override PlayerState? CheckTransitions(PlayerInputData input)
     {
-        if (_shootTimer >= _shootDuration)
+        if (input.IsMoving && input.ShootTriggered)
         {
-            if (input.IsMoving)
-                return PlayerState.Move;
-            else
-                return PlayerState.Idle;
+            return PlayerState.MoveAndShoot;
+        }
+        else if (input.IsMoving)
+        {
+            return PlayerState.Move;
+        }
+        else if (!input.ShootTriggered) 
+        {
+            return PlayerState.Idle;
         }
 
-        if (input.IsMoving)
-            return PlayerState.MoveAndShoot;
-
         return null;
+    }
+
+    public override void Exit()
+    {
+        player.AnimationController.SetWeaponType(0);
+        //player.AnimationController.SetIsFire();
+
+        player.Shooting.StopShooting();
+        Debug.Log("Exit Shoot State");
     }
 }

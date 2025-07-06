@@ -4,10 +4,15 @@ using UnityEngine;
 public class PlayerInputHandler : MonoBehaviour
 {
     public Vector2 MovementInput { get; private set; }
+
     public Vector2 AimInput { get; private set; }
+
     public bool IsMoving => MovementInput.sqrMagnitude > 0.01f;
+
     public bool IsAiming => AimInput.sqrMagnitude > 0.01f;
+
     public bool ShootPressed { get; private set; }
+
     public bool GrenadePressed { get; private set; }
 
     public void SetMovement(Vector2 dir)
@@ -41,12 +46,20 @@ public class PlayerInputHandler : MonoBehaviour
     private void Awake()
     {
         LeftJoyStick = new PlayerHandleJoystick(Joystick.Left);
-        LeftJoyStick.OnDirectionChangedEvent += OnLeftJoystick;
+        LeftJoyStick.OnDirectionChangedEvent += OnLeftJoystickChangeDirecion;
         LeftJoyStick.OnDirectionEndedEvent += OnLeftJoystickEndEvent;
 
         RightJoyStick = new PlayerHandleJoystick(Joystick.Right);
-        RightJoyStick.OnDirectionChangedEvent += OnRightJoystick;
-        RightJoyStick.OnDirectionEndedEvent += OnRightJoystickEndEvent;
+        RightJoyStick.OnDirectionChangedEvent = OnRightJoystickChangeDirecion;
+        RightJoyStick.OnDirectionEndedEvent = OnRightJoystickEndEvent;
+        RightJoyStick.OnStartClickedEvent = OnRightJoystickStartClickedEvent;
+    }
+
+    private void OnRightJoystickStartClickedEvent(Vector2 dir)
+    {
+        SetAim(Vector2.one);
+        SetShoot(true);
+        _inputDataDirty = true;
     }
 
     private void OnRightJoystickEndEvent()
@@ -70,7 +83,6 @@ public class PlayerInputHandler : MonoBehaviour
                 MovementInput,
                 AimInput,
                 IsMoving,
-                IsAiming,
                 ShootPressed,
                 GrenadePressed
             );
@@ -81,14 +93,14 @@ public class PlayerInputHandler : MonoBehaviour
         return _cachedInputData;
     }
 
-    public void OnLeftJoystick(Vector2 dir)
+    public void OnLeftJoystickChangeDirecion(Vector2 dir)
     {
         SetMovement(dir);
         _inputDataDirty = true;
     } 
         
 
-    public void OnRightJoystick(Vector2 dir)
+    public void OnRightJoystickChangeDirecion(Vector2 dir)
     {
         SetAim(dir);
         SetShoot(true);
@@ -99,14 +111,4 @@ public class PlayerInputHandler : MonoBehaviour
         SetGrenade(true);
         _inputDataDirty = true;
     }    
-
-    private void LateUpdate()
-    {
-        if (ShootPressed || GrenadePressed)
-        {
-            SetShoot(false);
-            SetGrenade(false);
-            _inputDataDirty = true;
-        }
-    }
 }

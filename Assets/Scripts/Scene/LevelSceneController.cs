@@ -20,6 +20,9 @@ public class LevelSceneController : SceneController
             {
                 InGamePanel inGamePanel = view as InGamePanel;
                 _inputHandler.RegisterTouchTarget(inGamePanel);
+
+                inGamePanel.OnUseGrenadeClicked = WeaponManager.Instance.Handle_EventUseGrenade;
+                inGamePanel.OnSwapWeaponClicked = WeaponManager.Instance.Handle_EventSwapWeapon;
             });
 
         _gameManager.StartGame();
@@ -28,6 +31,6 @@ public class LevelSceneController : SceneController
     public override void OnUnloaded()
     {
         MobileInput.Instance.SetInputFilter(null);
-        
+        UIManager.Instance.GetCache<InGamePanel>();
     }
 }

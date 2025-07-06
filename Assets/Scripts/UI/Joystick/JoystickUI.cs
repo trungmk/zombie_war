@@ -37,4 +37,8 @@ public class JoystickUI : MonoBehaviour, IHandleJoyStickDirection
     {
         _innerCircle.localPosition = Vector3.zero;
     }
+
+    public void OnStartClicked(Vector2 direction)
+    {
+    }
 }

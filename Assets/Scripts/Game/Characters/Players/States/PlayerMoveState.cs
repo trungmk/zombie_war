@@ -13,7 +13,7 @@ public class PlayerMoveState : PlayerStateBase
 
     public override void FixedUpdate()
     {
-        player.Movement.Move(_direction);
+        player.Movement.MoveAndRotate(_direction);
 
         float speed = _direction.magnitude * 4f;
         player.AnimationController.SetMovement(speed);
@@ -24,7 +24,7 @@ public class PlayerMoveState : PlayerStateBase
         if (!input.IsMoving)
             return PlayerState.Idle;
         
-        if (input.IsAiming && input.ShootTriggered && player.Shooting.CanShoot())
+        if (input.ShootTriggered)
             return PlayerState.MoveAndShoot;
 
         return null;

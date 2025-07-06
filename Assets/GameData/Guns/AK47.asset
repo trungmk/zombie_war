@@ -15,14 +15,13 @@ MonoBehaviour:
   WeaponName: AK47
   GunType: 1
   Damage: 25
-  FireRate: 0.15
-  BulletSpeed: 30
+  FireRate: 0.1
+  BulletSpeed: 40
   Range: 50
   IsAutomatic: 1
-  RecoilSpread: 1
+  RecoilSpread: 3
   PelletsPerShot: 1
   SpreadAngle: 10
-  BulletPrefab: {fileID: 0}
+  BulletName: Bullet
   ShootSound: {fileID: 0}
   ReloadSound: {fileID: 0}
-  MuzzleFlash: {fileID: 0}

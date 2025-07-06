@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem.EnhancedTouch;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Touch = UnityEngine.Touch;
 
@@ -8,10 +10,6 @@ public class MobileInput : MonoSingleton<MobileInput>
 {
     [SerializeField]
     private bool _isEnableMultiTouch = false;
-
-    [Header("LayerMask to filter touchable objects")]
-    [SerializeField]
-    private LayerMask _inputLayerMask;
 
     [SerializeField]
     private float _timeHoldDrag = 0.06f;
@@ -22,6 +20,7 @@ public class MobileInput : MonoSingleton<MobileInput>
     private readonly Dictionary<int, TouchData> _activeTouches = new Dictionary<int, TouchData>();
     private Camera _uiCamera;
     private IInputHandler _inputFilter;
+    private string _joystickName = "Joystick";
 
     private struct TouchData
     {
@@ -80,7 +79,6 @@ public class MobileInput : MonoSingleton<MobileInput>
 
     private void HandleMultiTouch()
     {
-        // Process all active touches
         for (int i = 0; i < Input.touchCount; i++)
         {
             Touch touch = Input.GetTouch(i);
@@ -89,7 +87,10 @@ public class MobileInput : MonoSingleton<MobileInput>
             switch (touch.phase)
             {
                 case TouchPhase.Began:
-                    HandleTouchDown(touch);
+                    if (IsTouchOnLayer(touch.position))
+                    {
+                        HandleTouchDown(touch);
+                    }
                     break;
 
                 case TouchPhase.Moved:
@@ -142,16 +143,17 @@ public class MobileInput : MonoSingleton<MobileInput>
         switch (touch.phase)
         {
             case TouchPhase.Began:
-                HandleTouchDown(touch);
-
+                if (IsTouchOnLayer(touch.position))
+                {
+                    HandleTouchDown(touch);
+                }
                 break;
 
             case TouchPhase.Moved:
                 if (_activeTouches.ContainsKey(touchId))
                 {
                     HandleTouchMove(touch);
-                }    
-
+                }
                 break;
 
             case TouchPhase.Ended:
@@ -161,7 +163,6 @@ public class MobileInput : MonoSingleton<MobileInput>
                     HandleTouchUp(touchId, touch.position);
                     _activeTouches.Remove(touchId);
                 }
-
                 break;
         }
 
@@ -175,15 +176,38 @@ public class MobileInput : MonoSingleton<MobileInput>
 
     private bool IsTouchOnLayer(Vector2 screenPosition)
     {
-        if (_uiCamera == null)
+        if (IsTouchOverUI(screenPosition))
         {
-            Debug.LogWarning("UI Camera is not set. Cannot check touch layer.");
             return false;
         }
 
-        Vector2 worldPoint = _uiCamera.ScreenToWorldPoint(screenPosition);
-        RaycastHit2D ray = Physics2D.Raycast(worldPoint, Vector2.zero, 0f, _inputLayerMask);
-        return ray.collider != null;
+        return true;
+    }
+
+    private bool IsTouchOverUI(Vector2 screenPosition)
+    {
+        if (EventSystem.current == null)
+        {
+            return false;
+        }
+
+        PointerEventData pointerData = new PointerEventData(EventSystem.current)
+        {
+            position = screenPosition
+        };
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(pointerData, results);
+
+        for (int i = 0; i < results.Count; i++)
+        {
+            if (results[i].gameObject.name.Contains(_joystickName))
+            {
+                return false;
+            }
+        }
+
+        return results.Count > 0;
     }
 
     private void HandleTouchMove(Touch touch)
