@@ -318,6 +318,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rigidbody: {fileID: 4759988062261493896}
   _directionOffset: 30
+  _rotationSensitivity: 0.2
 --- !u!114 &2297476166481579304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -356,11 +357,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52f7a7586c738b84d80ad55d6c7d55db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  throwPoint: {fileID: 844365003814683154}
-  grenadeCount: 3
-  damageableLayers:
+  _throwPoint: {fileID: 0}
+  _grenadeCount: 3
+  _damageableLayers:
     serializedVersion: 2
     m_Bits: 4294967295
+  _grenadePoolName: Grenade
+  _trajectoryHeight: 2
+  _useObjectPooling: 1
 --- !u!1 &4941040470367056382
 GameObject:
   m_ObjectHideFlags: 0

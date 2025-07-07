@@ -17,11 +17,11 @@ public class WeaponManager : MonoSingleton<WeaponManager>
     private int _startGrenadeWeaponIndex = 0;
 
     [SerializeField]
-    private int maxGrenadeInit = 3;
+    private int _maxGrenadeInit = 3;
 
     private int _currentProjectileWeaponIndex = 0;
     private int _currentGrenadeWeaponIndex = 0;
-    private int _remainingGrenadeCount = 0;
+    private int _remainingGrenadeCount = 5;
 
     private ProjectileWeapon _currentProjectileWeapon;
     private GrenadeWeapon _currentGrenadeWeapon;
@@ -43,12 +43,14 @@ public class WeaponManager : MonoSingleton<WeaponManager>
 
     public Action<ProjectileWeapon> OnProjectileWeaponChanged;
 
-    public Action<GrenadeWeapon> OnSetupOnGrenadeCompleted;
+    public Action<GrenadeWeapon> OnSetupOnGrenadeCompleted { get; set; }
 
-    public Action<GrenadeWeapon> UseGrenade;
+    public Action<GrenadeWeapon> OnUseGrenade { get; set; }
+
 
     private void Awake()
     {
+        _remainingGrenadeCount = _maxGrenadeInit;
         for (int i = 0; i < _projectileWeaponsPrefabs.Count; i++)
         {
             ProjectileWeapon projectileWeapon = Instantiate(_projectileWeaponsPrefabs[i]);
@@ -60,7 +62,7 @@ public class WeaponManager : MonoSingleton<WeaponManager>
 
         for (int i = 0; i < _grenadeWeaponsPrefabs.Count; i++)
         {
-            for (int j = 0; j < maxGrenadeInit; j++)
+            for (int j = 0; j < _maxGrenadeInit; j++)
             {
                 GrenadeWeapon grenadeWeapon = Instantiate(_grenadeWeaponsPrefabs[i]);
                 grenadeWeapon.gameObject.SetActive(false);
@@ -183,9 +185,11 @@ public class WeaponManager : MonoSingleton<WeaponManager>
         }
 
         _remainingGrenadeCount--;
-        if (UseGrenade != null)
+
+        Debug.Log($"Using grenade: {_currentGrenadeWeapon.name}, Remaining grenades: {_remainingGrenadeCount}");
+        if (OnUseGrenade != null)
         {
-            UseGrenade(_currentGrenadeWeapon);
+            OnUseGrenade(_currentGrenadeWeapon);
         }
     }
 }

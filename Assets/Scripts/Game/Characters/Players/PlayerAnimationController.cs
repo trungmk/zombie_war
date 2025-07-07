@@ -49,7 +49,7 @@ public class PlayerAnimationController : MonoBehaviour
         _animator.SetInteger(_weaponTypeHash, weaponType);
     }
 
-    public void TriggerThrowWeapon()
+    public void TriggerThrowGrenade()
     {
         _animator.SetTrigger(_grenadeHash);
     }

@@ -10,7 +10,7 @@ public class PlayerThrowGrenadeState : PlayerStateBase
     public override void Enter()
     {
         _grenadeTimer = 0f;
-        player.AnimationController.TriggerThrowWeapon();
+        player.AnimationController.TriggerThrowGrenade();
     }
 
     public override void Update()

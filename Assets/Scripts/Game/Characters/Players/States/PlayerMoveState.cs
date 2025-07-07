@@ -21,11 +21,14 @@ public class PlayerMoveState : PlayerStateBase
 
     public override PlayerState? CheckTransitions(PlayerInputData input)
     {
-        if (!input.IsMoving)
-            return PlayerState.Idle;
-        
+        if (input.GrenadeTriggered && player.Grenade.CanThrowGrenade())
+            return PlayerState.MoveAndGrenade;
+
         if (input.ShootTriggered)
             return PlayerState.MoveAndShoot;
+
+        if (!input.IsMoving)
+            return PlayerState.Idle;
 
         return null;
     }

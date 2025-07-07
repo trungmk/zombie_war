@@ -31,7 +31,7 @@ public class MovementComponent : BaseComponent
 
         Vector3 velocity = offsetDirection * _moveSpeed;
         velocity.y = _rigidbody.linearVelocity.y;
-        _rigidbody.linearVelocity = velocity;
+        _rigidbody.linearVelocity = velocity * Time.fixedDeltaTime;
     }    
 
     public void MoveAndRotate(Vector3 direction)
@@ -40,14 +40,9 @@ public class MovementComponent : BaseComponent
 
         Vector3 velocity = offsetDirection * _moveSpeed;
         velocity.y = _rigidbody.linearVelocity.y;
-        _rigidbody.linearVelocity = velocity * Time.fixedDeltaTime; 
+        _rigidbody.linearVelocity = velocity * Time.fixedDeltaTime;
 
-        IsMoving = direction.magnitude > 0.01f;
-
-        if (IsMoving)
-        {
-            RotateTowards(offsetDirection);
-        }
+        RotateTowards(offsetDirection);
     }
 
     public Vector3 ApplyDirectionOffset(Vector3 direction)

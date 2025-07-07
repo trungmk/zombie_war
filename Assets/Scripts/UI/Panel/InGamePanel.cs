@@ -40,8 +40,9 @@ public class InGamePanel : PanelView, ITouchTarget
     private Camera _uiCamera;
     private Player _player;
 
-    public Action OnSwapWeaponClicked;
-    public Action OnUseGrenadeClicked;
+    public Action OnSwapWeaponClicked { get; set; }
+
+    public Action OnUseGrenadeClicked { get; set; }
 
     public bool IsActive => gameObject.activeSelf;
 
@@ -92,8 +93,6 @@ public class InGamePanel : PanelView, ITouchTarget
     {
         UpdateEnemyHealthBarPositions();
     }
-
-    #region Player Health Bar
 
     public void SetupPlayerHealthBar(Player  player)
     {
@@ -155,10 +154,6 @@ public class InGamePanel : PanelView, ITouchTarget
             _player.Health.Heal(30);
         }
     }
-
-    #endregion
-
-    #region Enemy Health Bar Management
 
     private void PreloadEnemyHealthBars()
     {
@@ -295,10 +290,6 @@ public class InGamePanel : PanelView, ITouchTarget
         }
     }
 
-    #endregion
-
-    #region World to UI Position Conversion
-
     private Vector2 WorldToUIPosition(Vector3 worldPosition)
     {
         if (_worldCamera == null || _uiCamera == null)
@@ -318,10 +309,6 @@ public class InGamePanel : PanelView, ITouchTarget
 
         return localPosition;
     }
-
-    #endregion
-
-    #region Public API
 
     public HealthBarUI RegisterEnemy(Enemy enemy)
     {
@@ -344,10 +331,6 @@ public class InGamePanel : PanelView, ITouchTarget
     {
         _enemyHealthBarOffset = offset;
     }
-
-    #endregion
-
-    #region Touch Handling
 
     public void TouchedDown(InputData inputData)
     {
@@ -379,10 +362,6 @@ public class InGamePanel : PanelView, ITouchTarget
         _righttJoystick.transform.localPosition = _rightJoystickOriginPosition.localPosition;
     }
 
-    #endregion
-
-    #region Button Events
-
     public void SwapWeaponButton()
     {
         OnSwapWeaponClicked?.Invoke();
@@ -392,8 +371,6 @@ public class InGamePanel : PanelView, ITouchTarget
     {
         OnUseGrenadeClicked?.Invoke();
     }
-
-    #endregion
 
     public void SetActive(bool active)
     {

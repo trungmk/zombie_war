@@ -11018,7 +11018,7 @@ MonoBehaviour:
   - {fileID: 4605444168110260070, guid: c9b5c5b3d76c5b84898f70a0551861b1, type: 3}
   _startProjectileWeaponIndex: 1
   _startGrenadeWeaponIndex: 0
-  maxGrenadeInit: 3
+  _maxGrenadeInit: 3
 --- !u!1001 &1659558662
 PrefabInstance:
   m_ObjectHideFlags: 0
