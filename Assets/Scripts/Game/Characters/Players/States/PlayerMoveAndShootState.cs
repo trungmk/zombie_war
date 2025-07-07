@@ -6,25 +6,32 @@ public class PlayerMoveAndShootState : PlayerStateBase
 
     public override void Enter()
     {
-        //Vector3 direction = new Vector3(player.InputHandler.AimInput.x, 0, player.InputHandler.AimInput.y);
-        //player.Shooting.Shoot(direction);
-        //player.AnimationController.SetIsFire();
-        //player.AnimationController.SetWeaponType((int)WeaponManager.Instance.CurrentProjectileWeapon.WeaponType);
-
         if (!player.Shooting.IsAutoShooting())
         {
             player.Shooting.StartAutoShooting();
         }
 
         player.AnimationController.SetIsFire(true);
-        player.AnimationController.SetWeaponType((int)WeaponManager.Instance.CurrentProjectileWeapon.ProjectileWeaponType);
+        player.AnimationController.SetWeaponType((int) WeaponManager.Instance.CurrentProjectileWeapon.ProjectileWeaponType);
     }
 
     public override void HandleInput(PlayerInputData input)
     {
         Vector3 direction = new Vector3(input.MovementInput.x, 0, input.MovementInput.y);
         player.Movement.Move(direction);
-        player.Shooting.AutoShoot(direction);
+
+        // Aiming and shooting.
+        if (input.AimingInput.magnitude > 0.01f)
+        {
+            Vector3 aimDirection = new Vector3(input.AimingInput.x, 0, input.AimingInput.y);
+            player.Movement.Rotate(aimDirection);
+            player.Shooting.AutoShoot(aimDirection);
+        }
+        else
+        {
+            Vector3 forwardDirection = player.transform.forward;
+            player.Shooting.AutoShoot(forwardDirection);
+        }
     }
 
     public override PlayerState? CheckTransitions(PlayerInputData input)

@@ -95,6 +95,7 @@ public class WaveSpawner : MonoBehaviour
                 var enemyComponent = enemy.GetComponent<Enemy>();
                 if (enemyComponent != null)
                 {
+                    enemyComponent.Initialize();
                     InGamePanel inGamePanel = UIManager.Instance.GetCache<InGamePanel>();
                     if(inGamePanel != null)
                     {

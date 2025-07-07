@@ -40,7 +40,7 @@ public class ProjectileWeapon : Weapon
     {
         if (_laserSight != null && _laserSight.IsVisible && _firePoint != null)
         {
-            Vector3 laserDirection = _rotationOffsetQuaternion * transform.forward;
+            Vector3 laserDirection = _rotationOffsetQuaternion * _playerTransform.forward;
             _laserSight.UpdateLaser(_firePoint.position, laserDirection);
         }
 
@@ -72,8 +72,9 @@ public class ProjectileWeapon : Weapon
         }
     }
 
-    public void Setup()
+    public void Setup(Transform playerTransform)
     {
+        _playerTransform = playerTransform;
         ShowLaser();
     }
 
@@ -161,8 +162,8 @@ public class ProjectileWeapon : Weapon
         Vector3 spreadDirection = direction;
         if (_weaponData.RecoilSpread > 0)
         {
-            spreadDirection.x += Random.Range(-_weaponData.RecoilSpread, _weaponData.RecoilSpread) * 0.01f;
-            spreadDirection.z += Random.Range(-_weaponData.RecoilSpread, _weaponData.RecoilSpread) * 0.01f;
+            spreadDirection.x += Random.Range(-_weaponData.RecoilSpread, _weaponData.RecoilSpread) * 0.05f;
+            spreadDirection.z += Random.Range(-_weaponData.RecoilSpread, _weaponData.RecoilSpread) * 0.05f;
         }
 
         Bullet bullet = await CreateBullet(spreadDirection);
@@ -208,9 +209,6 @@ public class ProjectileWeapon : Weapon
 
     private Vector3 ApplyRotationOffset(Vector3 direction)
     {
-        if (direction.sqrMagnitude < 0.01f)
-            return direction;
-
         return _rotationOffsetQuaternion * direction;
     }
 }

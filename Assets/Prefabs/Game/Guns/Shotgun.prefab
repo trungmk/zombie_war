@@ -210,7 +210,7 @@ MonoBehaviour:
   _firePoint: {fileID: 7340314142055777875}
   _laserSight: {fileID: 3876513979345447440}
   _muzzleFlash: {fileID: 6360929822804414748}
-  _rotationOffset: 5
+  _rotationOffset: 6
 --- !u!1 &4438679525095120006
 GameObject:
   m_ObjectHideFlags: 0

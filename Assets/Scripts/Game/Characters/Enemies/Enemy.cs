@@ -45,32 +45,56 @@ public class Enemy : BaseCharacter, ITakeDamage
     public Transform[] Waypoints => _waypoints;
     public Transform PlayerTransform { get; private set; }
     public Rigidbody Rigidbody => _rigidbody;
-    public Animator Animator => _animator; 
+    public Animator Animator => _animator;
 
     public Action<Enemy> OnEnemyDied;
-
     public Action<Enemy> OnEnemyAttack;
-
     public Action<int, int> OnEnemyTakeDamage;
 
-    private void Start()
+    private bool _hasValidNavMesh = false;
+
+    private void Awake()
     {
-        Timing.RunCoroutine(StartAI());
+        CheckNavMeshValidity();
     }
 
     private void OnEnable()
     {
         _animator.applyRootMotion = false;
+        CheckNavMeshValidity();
     }
 
-    private IEnumerator<float> StartAI()
+    private void CheckNavMeshValidity()
     {
-        yield return Timing.WaitForSeconds(2);
+        if (_navMeshAgent == null)
+        {
+            return;
+        }
 
-        Initialize();
-    }    
+        NavMeshHit hit;
+        _hasValidNavMesh = NavMesh.SamplePosition(transform.position, out hit, 5f, NavMesh.AllAreas);
 
-    private void Initialize()
+        if (!_hasValidNavMesh)
+        {
+            if (NavMesh.SamplePosition(transform.position, out hit, 50f, NavMesh.AllAreas))
+            {
+                transform.position = hit.position;
+                _hasValidNavMesh = true;       
+            }
+            else
+            {
+                _navMeshAgent.enabled = false;
+                _hasValidNavMesh = false;
+            }
+        }
+
+        if (_hasValidNavMesh && !_navMeshAgent.enabled)
+        {
+            _navMeshAgent.enabled = true;
+        }
+    }
+
+    public void Initialize()
     {
         if (_enemyData == null)
         {
@@ -78,15 +102,23 @@ public class Enemy : BaseCharacter, ITakeDamage
             return;
         }
 
+        // Setup health component
         _healthComponent.Setup(_enemyData.MaxHealth);
         _healthComponent.OnDied += Handle_OnDied;
         _healthComponent.OnHealthChanged += Handle_OnHealthChanged;
 
-        _navMeshAgent.speed = _enemyData.MoveSpeed;
-        _navMeshAgent.angularSpeed = _enemyData.RotationSpeed;
-        _navMeshAgent.stoppingDistance = _enemyData.WaypointStoppingDistance;
+        if (_hasValidNavMesh && _navMeshAgent != null && _navMeshAgent.enabled)
+        {
+            _navMeshAgent.speed = _enemyData.MoveSpeed;
+            _navMeshAgent.angularSpeed = _enemyData.RotationSpeed;
+            _navMeshAgent.stoppingDistance = _enemyData.WaypointStoppingDistance;
+        }
 
-        _enemyAI.Initialize(this);
+        // Initialize AI
+        if (_enemyAI != null)
+        {
+            _enemyAI.Initialize(this);
+        }
 
         FindPlayer();
     }
@@ -98,10 +130,7 @@ public class Enemy : BaseCharacter, ITakeDamage
             _hitFX.Play();
         }
 
-        if (OnEnemyTakeDamage != null)
-        {
-            OnEnemyTakeDamage(currentHealth, maxHealth);
-        }
+        OnEnemyTakeDamage?.Invoke(currentHealth, maxHealth);
     }
 
     private void Handle_OnDied()
@@ -136,7 +165,7 @@ public class Enemy : BaseCharacter, ITakeDamage
         await UniTask.WaitForSeconds(1f);
 
         ObjectPooling.Instance.ReturnToPool(go);
-    }    
+    }
 
     private void FindPlayer()
     {
@@ -193,5 +222,29 @@ public class Enemy : BaseCharacter, ITakeDamage
     {
         Debug.Log("Hit damage:" + damageAmount);
         _healthComponent.TakeDamage(damageAmount);
+    }
+
+    public bool HasValidNavMesh()
+    {
+        return _hasValidNavMesh && _navMeshAgent != null && _navMeshAgent.enabled;
+    }
+
+    public bool PlaceOnNavMesh(Vector3 desiredPosition)
+    {
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(desiredPosition, out hit, 10f, NavMesh.AllAreas))
+        {
+            transform.position = hit.position;
+            _hasValidNavMesh = true;
+
+            if (_navMeshAgent != null && !_navMeshAgent.enabled)
+            {
+                _navMeshAgent.enabled = true;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }

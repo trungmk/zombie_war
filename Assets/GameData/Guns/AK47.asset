@@ -19,7 +19,7 @@ MonoBehaviour:
   BulletSpeed: 40
   Range: 50
   IsAutomatic: 1
-  RecoilSpread: 1
+  RecoilSpread: 2
   PelletsPerShot: 1
   SpreadAngle: 1
   LifeTime: 2

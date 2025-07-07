@@ -46,7 +46,7 @@ public class ShootingComponent : BaseComponent
         _currentWeapon.transform.localPosition = Vector3.zero;
         _currentWeapon.transform.localRotation = Quaternion.identity;
 
-        _currentWeapon.Setup();
+        _currentWeapon.Setup(_player.transform);
         _currentWeaponEquipped = _currentWeapon.WeaponData;
     }
 

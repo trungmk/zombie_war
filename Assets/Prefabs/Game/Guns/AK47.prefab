@@ -243,7 +243,7 @@ MonoBehaviour:
   _firePoint: {fileID: 2956547462051925937}
   _laserSight: {fileID: 3499323849359014232}
   _muzzleFlash: {fileID: 7776858778756399848}
-  _rotationOffset: 8
+  _rotationOffset: 6
 --- !u!1001 &1883587815088781407
 PrefabInstance:
   m_ObjectHideFlags: 0

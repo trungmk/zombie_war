@@ -20,8 +20,8 @@ MonoBehaviour:
   Range: 25
   IsAutomatic: 1
   RecoilSpread: 3
-  PelletsPerShot: 7
-  SpreadAngle: 10
+  PelletsPerShot: 10
+  SpreadAngle: 20
   LifeTime: 0.8
   BulletName: Bullet
   ShootSound: {fileID: 0}

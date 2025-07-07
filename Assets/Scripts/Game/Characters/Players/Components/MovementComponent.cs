@@ -6,12 +6,17 @@ public class MovementComponent : BaseComponent
     private Rigidbody _rigidbody;
 
     [SerializeField]
-    private float _directionOffset = 50f; 
+    private float _directionOffset = 50f;
+
+    [SerializeField]
+    private float _rotationSensitivity = 0.5f;
 
     private float _moveSpeed = 5f;
+
     private float _rotationSpeed = 360f;
 
     public bool IsMoving { get; private set; }
+
     public Vector3 CurrentVelocity => _rigidbody.linearVelocity;
 
     public void Setup(float moveSpeed, float rotationSpeed)
@@ -26,7 +31,7 @@ public class MovementComponent : BaseComponent
 
         Vector3 velocity = offsetDirection * _moveSpeed;
         velocity.y = _rigidbody.linearVelocity.y;
-        _rigidbody.linearVelocity = velocity * Time.fixedDeltaTime;
+        _rigidbody.linearVelocity = velocity;
     }    
 
     public void MoveAndRotate(Vector3 direction)
@@ -62,7 +67,8 @@ public class MovementComponent : BaseComponent
         }
 
         Quaternion targetRot = Quaternion.LookRotation(direction, Vector3.up);
-        float rotationFactor = _rotationSpeed * Time.fixedDeltaTime;
+        float rotationFactor = _rotationSpeed * _rotationSensitivity * Time.fixedDeltaTime;
+        rotationFactor = Mathf.Clamp01(rotationFactor);
         _rigidbody.rotation = Quaternion.Slerp(transform.rotation, targetRot, rotationFactor);
     }
 
