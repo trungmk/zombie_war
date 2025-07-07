@@ -36,15 +36,11 @@ public class InGamePanel : PanelView, ITouchTarget
     private Vector3 _enemyHealthBarOffset = new Vector3(0, 2f, 0);
 
     private JoyStickHandler _joyStickHandler;
-
     private Camera _worldCamera;
-
     private Camera _uiCamera;
-
     private Player _player;
 
     public Action OnSwapWeaponClicked;
-
     public Action OnUseGrenadeClicked;
 
     public bool IsActive => gameObject.activeSelf;
@@ -55,8 +51,13 @@ public class InGamePanel : PanelView, ITouchTarget
 
     private const int PRELOAD_COUNT = 50;
 
+    // Singleton instance for easy access
+    public static InGamePanel Instance { get; private set; }
+
     protected override void OnPanelShowed(params object[] args)
     {
+        Instance = this;
+
         _joyStickHandler = args[0] as JoyStickHandler;
         if (_joyStickHandler == null)
         {
@@ -72,7 +73,6 @@ public class InGamePanel : PanelView, ITouchTarget
         _leftJoystick.Setup(_joyStickHandler, Joystick.Left);
         _righttJoystick.Setup(_joyStickHandler, Joystick.Right);
 
-        SetupPlayerHealthBar();
         PreloadEnemyHealthBars();
     }
 
@@ -84,6 +84,8 @@ public class InGamePanel : PanelView, ITouchTarget
         {
             _player.Health.OnHealthChanged -= OnPlayerHealthChanged;
         }
+
+        Instance = null;
     }
 
     private void Update()
@@ -93,26 +95,64 @@ public class InGamePanel : PanelView, ITouchTarget
 
     #region Player Health Bar
 
-    private void SetupPlayerHealthBar()
+    public void SetupPlayerHealthBar(Player  player)
     {
-        _player = FindFirstObjectByType<Player>();
-        if (_player == null || _playerHealthBar == null)
+        _player = player;
+        if (_player == null)
         {
-            Debug.LogError("Player or PlayerHealthBar not found!");
+            Debug.LogError("Player not found!");
             return;
         }
 
-        _playerHealthBar.Initialize(_player.PlayerData.MaxHealth);
+        if (_playerHealthBar == null)
+        {
+            Debug.LogError("PlayerHealthBar UI component not assigned!");
+            return;
+        }
+
+        if (_player.Health == null)
+        {
+            Debug.LogError("Player HealthComponent not found!");
+            return;
+        }
+
+        float maxHealth = (float)_player.PlayerData.MaxHealth;
+        _playerHealthBar.Initialize(maxHealth);
+
         _player.Health.OnHealthChanged += OnPlayerHealthChanged;
 
-        OnPlayerHealthChanged(_player.Health.CurrentHealth, _player.Health.MaxHealth);
+        float currentHealth = (float)_player.Health.CurrentHealth;
+        OnPlayerHealthChanged((int)currentHealth, (int)maxHealth);
+
+        Debug.Log($"Player health bar initialized - Current: {currentHealth}, Max: {maxHealth}");
     }
 
     private void OnPlayerHealthChanged(int currentHealth, int maxHealth)
     {
         if (_playerHealthBar != null)
         {
-            _playerHealthBar.UpdateHealth(currentHealth, maxHealth);
+            // Convert int to float for HealthBarUI
+            _playerHealthBar.UpdateHealth((float)currentHealth, (float)maxHealth);
+            Debug.Log($"Player health updated - Current: {currentHealth}, Max: {maxHealth}");
+        }
+    }
+
+    // Public method to test player health bar
+    [ContextMenu("Test Player Damage")]
+    public void TestPlayerDamage()
+    {
+        if (_player != null)
+        {
+            _player.TakeDamage(20);
+        }
+    }
+
+    [ContextMenu("Test Player Heal")]
+    public void TestPlayerHeal()
+    {
+        if (_player != null && _player.Health != null)
+        {
+            _player.Health.Heal(30);
         }
     }
 
@@ -134,7 +174,6 @@ public class InGamePanel : PanelView, ITouchTarget
     {
         GameObject healthBarObj = Instantiate(_enemyHealthBarPrefab.gameObject, _enemyHealthBarContainer);
         HealthBarUI healthBar = healthBarObj.GetComponent<HealthBarUI>();
-
         return healthBar;
     }
 
@@ -151,9 +190,15 @@ public class InGamePanel : PanelView, ITouchTarget
             healthBar = CreateEnemyHealthBar();
         }
 
-        healthBar.Initialize(enemy.EnemyData.MaxHealth);
+        // Initialize with enemy max health
+        float enemyMaxHealth = (float)enemy.EnemyData.MaxHealth;
+        healthBar.Initialize(enemyMaxHealth);
 
-        Action<int, int> healthCallback = (current, max) => healthBar.UpdateHealth(current, max);
+        // Store callback reference for proper cleanup
+        System.Action<int, int> healthCallback = (current, max) =>
+        {
+            healthBar.UpdateHealth((float)current, (float)max);
+        };
         _enemyHealthCallbacks[enemy] = healthCallback;
 
         enemy.HealthComponent.OnHealthChanged += healthCallback;
@@ -161,7 +206,10 @@ public class InGamePanel : PanelView, ITouchTarget
 
         _activeEnemyHealthBars[enemy] = healthBar;
         UpdateEnemyHealthBarPosition(enemy, healthBar);
-        healthBar.UpdateHealth(enemy.HealthComponent.CurrentHealth, enemy.HealthComponent.MaxHealth);
+
+        // Set initial health
+        float currentHealth = (float)enemy.HealthComponent.CurrentHealth;
+        healthBar.UpdateHealth(currentHealth, enemyMaxHealth);
         healthBar.SetVisibility(true);
 
         return healthBar;
@@ -184,6 +232,7 @@ public class InGamePanel : PanelView, ITouchTarget
         {
             _activeEnemyHealthBars.Remove(enemy);
 
+            // Unsubscribe from events to prevent memory leaks
             if (_enemyHealthCallbacks.TryGetValue(enemy, out var callback))
             {
                 enemy.HealthComponent.OnHealthChanged -= callback;
@@ -211,7 +260,6 @@ public class InGamePanel : PanelView, ITouchTarget
             }
             else if (enemy == null)
             {
-                // Clean up null enemies
                 ReturnEnemyHealthBarToCache(enemy);
             }
         }
@@ -247,6 +295,10 @@ public class InGamePanel : PanelView, ITouchTarget
         }
     }
 
+    #endregion
+
+    #region World to UI Position Conversion
+
     private Vector2 WorldToUIPosition(Vector3 worldPosition)
     {
         if (_worldCamera == null || _uiCamera == null)
@@ -267,13 +319,16 @@ public class InGamePanel : PanelView, ITouchTarget
         return localPosition;
     }
 
+    #endregion
+
+    #region Public API
+
     public HealthBarUI RegisterEnemy(Enemy enemy)
     {
         if (enemy != null && !_activeEnemyHealthBars.ContainsKey(enemy))
         {
             return GetEnemyHealthBar(enemy);
         }
-
         return null;
     }
 
@@ -305,11 +360,9 @@ public class InGamePanel : PanelView, ITouchTarget
             case Joystick.Left:
                 _leftJoystick.transform.localPosition = localTouchPos;
                 break;
-
             case Joystick.Right:
                 _righttJoystick.transform.localPosition = localTouchPos;
                 break;
-
             default:
                 Debug.LogWarning("Unknown joystick type for touch position: " + inputData.TouchPosition);
                 break;

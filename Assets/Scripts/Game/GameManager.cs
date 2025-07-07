@@ -22,6 +22,8 @@ public class GameManager : MonoBehaviour
 
     private CinemachineCamera _cinemachineCamera;
 
+    public Player Player { get; private set; }
+
     private void Awake()
     {
         _levelManager.OnLevelCompleted += OnLevelCompleted;
@@ -30,7 +32,7 @@ public class GameManager : MonoBehaviour
         _cinemachineCamera = CameraManager.Instance.CinemachineCamera;
     }
 
-    public void StartGame()
+    public void StartGame(Action<Player> callback)
     {
         WeaponManager.Instance.Init();
 
@@ -49,7 +51,12 @@ public class GameManager : MonoBehaviour
             _joystickHandler.RegisterHandleJoyStickDirection(Joystick.Right, playerInputHandler.RightJoyStick);
         }
 
-        InGamePanel inGamePanel = UIManager.Instance.GetCache<InGamePanel>();
+        Player = playerGO;
+
+        if (callback != null)
+        {
+            callback(playerGO);
+        }
     }
 
     private void OnWaveStarted(int obj)
