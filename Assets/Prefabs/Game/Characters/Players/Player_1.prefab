@@ -357,7 +357,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52f7a7586c738b84d80ad55d6c7d55db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _throwPoint: {fileID: 0}
+  _throwPoint: {fileID: 844365003814683154}
   _grenadeCount: 3
   _damageableLayers:
     serializedVersion: 2
@@ -873,7 +873,12 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: e1f116b6b51b8ec44bcc484106ba9e16, type: 2}
     - target: {fileID: 8256623680921918611, guid: ebe8bbc865df70f42863e6589189de1a, type: 3}
       propertyPath: m_WarningMessage
-      value: 
+      value: "\nBinding warning: Some generic clip(s) animate transforms that are
+        already bound by a Humanoid avatar. These transforms can only be changed
+        by Humanoid clips.\n\tTransform 'lowerarm_l'\n\tTransform 'neck_01'\n\tTransform
+        'hand_l'\n\tTransform 'upperarm_l'\n\tTransform 'pelvis'\n\tTransform 'spine_03'\n\tTransform
+        'spine_01'\n\tTransform 'lowerarm_r'\n\tTransform 'hand_r'\n\tTransform 'lowerarm_l'\n\tand
+        more ..."
       objectReference: {fileID: 0}
     - target: {fileID: 8256623680921918611, guid: ebe8bbc865df70f42863e6589189de1a, type: 3}
       propertyPath: m_ApplyRootMotion

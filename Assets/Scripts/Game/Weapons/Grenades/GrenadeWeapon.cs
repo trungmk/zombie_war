@@ -12,7 +12,7 @@ public class GrenadeWeapon : Weapon
     private LayerMask _layerMask;
 
     [SerializeField]
-    private PooledMono _pooledMono;
+    private ParticleSystem _particleSystem;
 
     private Rigidbody _rigidbody;
 

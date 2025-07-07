@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using Core;
 using Cysharp.Threading.Tasks;
+using Unity.VisualScripting;
 
 public class GrenadeComponent : BaseComponent
 {
@@ -121,14 +122,7 @@ public class GrenadeComponent : BaseComponent
         Vector3 throwDirection = CalculateThrowDirection(aimDirection);
         Vector3 spawnPosition = _throwPoint.position;
 
-        if (_useObjectPooling)
-        {
-            CreateGrenadeFromPool(spawnPosition, throwDirection).Forget();
-        }
-        else
-        {
-            CreateGrenadeProjectile(spawnPosition, throwDirection);
-        }
+        GetGrenade(spawnPosition, throwDirection);
 
         PlayPinPullSound(spawnPosition);
         OnGrenadeThrown?.Invoke();
@@ -151,49 +145,13 @@ public class GrenadeComponent : BaseComponent
         return throwDir;
     }
 
-    private async UniTaskVoid CreateGrenadeFromPool(Vector3 position, Vector3 direction)
+    private void GetGrenade(Vector3 position, Vector3 direction)
     {
-        try
-        {
-            GameObject grenadeObj = await ObjectPooling.Instance.Get(_grenadePoolName);
+        GameObject grenadeObj = _grenadeWeapon.gameObject;
 
-            if (grenadeObj == null)
-            {
-                Debug.LogWarning($"Failed to get grenade from pool: {_grenadePoolName}. Creating fallback.");
-                CreateGrenadeProjectile(position, direction);
-                return;
-            }
-
-            SetupGrenadePhysics(grenadeObj, position, direction);
-            StartCoroutine(GrenadeFuseCoroutine(grenadeObj, true));
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"Error creating grenade from pool: {ex.Message}");
-            CreateGrenadeProjectile(position, direction);
-        }
-    }
-
-    private GameObject CreateGrenadeProjectile(Vector3 position, Vector3 direction)
-    {
-        GameObject grenadeObj = null;
-
-        if (_grenadeWeaponData.ExplosionEffect != null)
-        {
-            grenadeObj = Instantiate(_grenadeWeaponData.ExplosionEffect, position, Quaternion.identity);
-        }
-        else
-        {
-            grenadeObj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            grenadeObj.transform.position = position;
-            grenadeObj.transform.localScale = Vector3.one * 0.2f;
-            grenadeObj.name = "Grenade_Fallback";
-        }
-
+        grenadeObj.SetActive(true);
         SetupGrenadePhysics(grenadeObj, position, direction);
-        StartCoroutine(GrenadeFuseCoroutine(grenadeObj, false));
-
-        return grenadeObj;
+        StartCoroutine(GrenadeFuseCoroutine(grenadeObj, true));
     }
 
     private void SetupGrenadePhysics(GameObject grenadeObj, Vector3 position, Vector3 direction)

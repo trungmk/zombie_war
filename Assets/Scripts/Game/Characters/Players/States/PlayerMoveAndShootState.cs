@@ -36,6 +36,7 @@ public class PlayerMoveAndShootState : PlayerStateBase
         }
         else
         {
+            player.Movement.Move(Vector3.zero);
             player.AnimationController.SetMovement(0f);
         }
 
