@@ -75,7 +75,6 @@ public class MovementComponent : BaseComponent
 
     public void StopMovement()
     {
-        Debug.Log("Stopping Movement");
         _rigidbody.linearVelocity = new Vector3(0, _rigidbody.linearVelocity.y, 0);
         _rigidbody.angularVelocity = Vector3.zero;
         IsMoving = false;

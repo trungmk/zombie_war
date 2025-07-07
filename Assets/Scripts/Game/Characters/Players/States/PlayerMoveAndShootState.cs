@@ -7,7 +7,12 @@ public class PlayerMoveAndShootState : PlayerStateBase
 
     private Vector3 _aimingDirection;
 
-    public PlayerMoveAndShootState(Player player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
+    public PlayerMoveAndShootState(Player player, PlayerStateMachine stateMachine) : base(player, stateMachine)
+    {
+        PlayerState = PlayerState.MoveAndShoot;
+        _movementDirection = Vector3.zero;
+        _aimingDirection = Vector3.zero;
+    }
 
     public override void Enter()
     {

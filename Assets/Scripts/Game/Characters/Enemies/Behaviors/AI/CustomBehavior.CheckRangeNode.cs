@@ -16,6 +16,16 @@ public class EnemyCheckRangeNode : LeafNode
 
     private NodeState CheckPlayerInRange()
     {
+        if (_enemy == null || _enemy.HealthComponent == null || _enemy.HealthComponent.IsDead)
+        {
+            return NodeState.Failure;
+        }
+
+        if (_enemy.NavMeshAgent == null || !_enemy.NavMeshAgent.enabled)
+        {
+            return NodeState.Failure;
+        }
+
         if (_enemy.PlayerTransform == null)
         {
 			return NodeState.Failure;

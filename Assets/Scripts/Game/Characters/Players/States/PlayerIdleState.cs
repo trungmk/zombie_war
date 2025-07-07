@@ -1,13 +1,24 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class PlayerIdleState : PlayerStateBase
 {
-    public PlayerIdleState(Player player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
+    public PlayerIdleState(Player player, PlayerStateMachine stateMachine) : base(player, stateMachine)
+    {
+        PlayerState = PlayerState.Idle;
+    }
 
     public override void Enter()
     {
         player.Movement.StopMovement();
         player.AnimationController.SetMovement(0);
+
+        WeaponManager.Instance.OnUseGrenade += HandleGrenadeInput;
+    }
+
+    private void HandleGrenadeInput(GrenadeWeapon weapon)
+    {
+        
     }
 
     public override void HandleInput(PlayerInputData input)

@@ -7,7 +7,6 @@ using Unity.VisualScripting;
 
 public class GrenadeComponent : BaseComponent
 {
-    [Header("Grenade Settings")]
     [SerializeField]
     private Transform _throwPoint;
 
@@ -18,20 +17,13 @@ public class GrenadeComponent : BaseComponent
     private LayerMask _damageableLayers = -1;
 
     [SerializeField]
-    private string _grenadePoolName = "Grenade";
-
-    [Header("Throw Settings")]
-    [SerializeField]
-    private float _trajectoryHeight = 2f;
-
-    [SerializeField]
-    private bool _useObjectPooling = true;
+    private float _trajectoryHeight = 1f;
 
     private GrenadeWeapon _grenadeWeapon;
     private GrenadeWeaponData _grenadeWeaponData;
     private bool _isAiming = false;
+    private Player _player;
 
-    public event Action<int> OnGrenadeCountChanged;
     public event Action OnGrenadeThrown;
 
     public int GrenadeCount => _grenadeCount;
@@ -42,7 +34,6 @@ public class GrenadeComponent : BaseComponent
         if (WeaponManager.Instance != null)
         {
             WeaponManager.Instance.OnSetupOnGrenadeCompleted += SetGrenadeData;
-            WeaponManager.Instance.OnUseGrenade += HandleGrenadeInput;
         }
     }
 
@@ -51,12 +42,12 @@ public class GrenadeComponent : BaseComponent
         if (WeaponManager.Instance != null)
         {
             WeaponManager.Instance.OnSetupOnGrenadeCompleted -= SetGrenadeData;
-            WeaponManager.Instance.OnUseGrenade -= HandleGrenadeInput;
         }
     }
 
-    public void Setup()
+    public void Setup(Player player)
     {
+        _player = player;
         if (WeaponManager.Instance != null && WeaponManager.Instance.CurrentGrenadeWeapon != null)
         {
             SetGrenadeData(WeaponManager.Instance.CurrentGrenadeWeapon);
@@ -83,7 +74,6 @@ public class GrenadeComponent : BaseComponent
     public void SetGrenadeCount(int count)
     {
         _grenadeCount = Mathf.Max(0, count);
-        OnGrenadeCountChanged?.Invoke(_grenadeCount);
     }
 
     public bool CanThrowGrenade()
@@ -117,21 +107,23 @@ public class GrenadeComponent : BaseComponent
 
         _isAiming = false;
         _grenadeCount--;
-        OnGrenadeCountChanged?.Invoke(_grenadeCount);
 
         Vector3 throwDirection = CalculateThrowDirection(aimDirection);
         Vector3 spawnPosition = _throwPoint.position;
 
         GetGrenade(spawnPosition, throwDirection);
-
         PlayPinPullSound(spawnPosition);
-        OnGrenadeThrown?.Invoke();
+
+        if (OnGrenadeThrown != null)
+        {
+            OnGrenadeThrown();
+        }
     }
 
-    private void HandleGrenadeInput(GrenadeWeapon grenadeWeapon)
+    public void Handle_OnStartThrowGrenade()
     {
-        Vector2 defaultDirection = Vector2.up;
-        ThrowGrenade(defaultDirection);
+        Vector2 aimDirection = new Vector2(_player.transform.forward.x, _player.transform.forward.z);
+        ThrowGrenade(aimDirection);
     }
 
     private Vector3 CalculateThrowDirection(Vector2 aimDirection)
@@ -211,14 +203,7 @@ public class GrenadeComponent : BaseComponent
         PlayExplosionSound(explosionPosition);
         ApplyExplosionDamage(explosionPosition);
 
-        if (returnToPool)
-        {
-            ObjectPooling.Instance.ReturnToPool(grenadeObj);
-        }
-        else
-        {
-            Destroy(grenadeObj);
-        }
+        Destroy(grenadeObj);
     }
 
     private void CreateExplosionEffect(Vector3 position)
@@ -254,7 +239,10 @@ public class GrenadeComponent : BaseComponent
 
         foreach (Collider hit in colliders)
         {
-            if (hit == null) continue;
+            if (hit == null)
+            {
+                continue;
+            } 
 
             float distance = Vector3.Distance(explosionPosition, hit.transform.position);
             float damageMultiplier = 1f - (distance / _grenadeWeaponData.ExplosionRadius);

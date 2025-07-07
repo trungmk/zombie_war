@@ -106,6 +106,7 @@ public class PlayerInputHandler : MonoBehaviour
         SetShoot(true);
         _inputDataDirty = true;
     }
+
     public void OnGrenadeButton()
     {
         SetGrenade(true);

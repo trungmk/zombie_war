@@ -1,7 +1,7 @@
 ﻿public class BehaviorTree
 {
     public Node RootNode;
-    public void Tick()
+    public virtual void Tick()
     {
         RootNode.Run();
     }

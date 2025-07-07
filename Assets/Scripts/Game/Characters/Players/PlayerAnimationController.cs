@@ -22,6 +22,8 @@ public class PlayerAnimationController : MonoBehaviour
     private int _fireHash;
     private int _changeWeaponHash;
 
+    public Action OnStartThrowGrenade { get; set; }
+
     private void Awake()
     {
         // Cache parameter hashes for performance
@@ -62,6 +64,15 @@ public class PlayerAnimationController : MonoBehaviour
     public void TriggerChangeWeapon()
     {
         _animator.SetTrigger(_changeWeaponHash);
+    }
+
+    public void StartThrowGrenadeEvent()
+    {
+        Debug.Log("AnimationController: Starting throw grenade event");
+        if (OnStartThrowGrenade != null)
+        {
+            OnStartThrowGrenade();
+        }
     }
 
     public void StopRig()

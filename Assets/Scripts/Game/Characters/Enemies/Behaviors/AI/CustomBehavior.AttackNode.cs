@@ -21,6 +21,18 @@ public class EnemyAttackNode : LeafNode
 
     private NodeState AttackPlayer()
     {
+        if (_enemy == null || _enemy.HealthComponent == null || _enemy.HealthComponent.IsDead)
+        {
+            _isInAttackSequence = false;
+            return NodeState.Failure;
+        }
+
+        if (_enemy.NavMeshAgent == null || !_enemy.NavMeshAgent.enabled)
+        {
+            _isInAttackSequence = false;
+            return NodeState.Failure;
+        }
+
         if (_currentTarget == null)
         {
             _isInAttackSequence = false;
@@ -36,7 +48,7 @@ public class EnemyAttackNode : LeafNode
 
         _enemy.NavMeshAgent.isStopped = true;
         _enemy.NavMeshAgent.velocity = Vector3.zero;
-        _enemy.NavMeshAgent.SetDestination(_enemy.transform.position); // Stop moving
+        _enemy.NavMeshAgent.SetDestination(_enemy.transform.position);
 
         Vector3 direction = (_currentTarget.position - _enemy.transform.position).normalized;
         if (direction != Vector3.zero)
@@ -51,14 +63,14 @@ public class EnemyAttackNode : LeafNode
             _enemy.AttackPlayer();
             _lastAttackTime = Time.time;
 
-            if (_enemy.Animator != null)
+            if (_enemy.Animator != null && _enemy.Animator.enabled)
             {
                 _enemy.Animator.SetTrigger("Attack");
                 _enemy.Animator.SetBool("IsRunning", false);
             }
         }
 
-        if (_isInAttackSequence && Time.time - _lastAttackTime < 1f) 
+        if (_isInAttackSequence && Time.time - _lastAttackTime < 1f)
         {
             return NodeState.Running;
         }

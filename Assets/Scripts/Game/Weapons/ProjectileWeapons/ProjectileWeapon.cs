@@ -1,5 +1,6 @@
 using Core;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 
 public class ProjectileWeapon : Weapon
@@ -20,8 +21,11 @@ public class ProjectileWeapon : Weapon
     private float _rotationOffset = 30f;
 
     private float _lastFireTime;
+
     private bool _isFiring = false;
+
     private float _autoFireTimer = 0f;
+
     private Transform _playerTransform;
 
     public ProjectileWeaponType ProjectileWeaponType => _weaponData?.GunType ?? ProjectileWeaponType.AK47;

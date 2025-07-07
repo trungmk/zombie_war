@@ -4,6 +4,7 @@ public abstract class PlayerStateBase
 {
     protected Player player;
     protected PlayerStateMachine stateMachine;
+    public PlayerState PlayerState;
 
     public PlayerStateBase(Player player, PlayerStateMachine stateMachine)
     {

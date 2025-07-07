@@ -4,7 +4,11 @@ public class PlayerShootState : PlayerStateBase
 {
     private Vector3 _direction;
 
-    public PlayerShootState(Player player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
+    public PlayerShootState(Player player, PlayerStateMachine stateMachine) : base(player, stateMachine) 
+    { 
+        PlayerState = PlayerState.Shoot;
+        _direction = Vector3.zero;
+    }
 
     public override void Enter()
     {

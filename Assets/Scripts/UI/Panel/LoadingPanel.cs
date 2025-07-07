@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class LoadingPanel : PanelView
+public class LoadingTransition : BaseScreenTransition
 {
     [SerializeField]
     private TMP_Text _tapToPlayText;
@@ -31,9 +31,8 @@ public class LoadingPanel : PanelView
             .SetEase(Ease.InOutSine);
     }
 
-    protected override void OnPanelHided(params object[] args)
+    protected override void OnTransitionScreenHided(params object[] args)
     {
         _flashTween?.Kill();
-        base.OnPanelHided(args);
     }
 }

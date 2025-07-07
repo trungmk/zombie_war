@@ -12,7 +12,7 @@ public class GrenadeWeapon : Weapon
     private LayerMask _layerMask;
 
     [SerializeField]
-    private ParticleSystem _particleSystem;
+    private ParticleSystem _hitEffect;
 
     private Rigidbody _rigidbody;
 
@@ -54,9 +54,10 @@ public class GrenadeWeapon : Weapon
         yield return new WaitForSeconds(_grenadeData.CountDownTime);
             
 
-        if (_grenadeData.ExplosionEffect != null)
+        if (_hitEffect != null)
         {
-            Instantiate(_grenadeData.ExplosionEffect, transform.position, Quaternion.identity);
+            _hitEffect.gameObject.SetActive(true);
+            _hitEffect.Play();
         }
 
         if (_grenadeData.ExplosionSound != null)

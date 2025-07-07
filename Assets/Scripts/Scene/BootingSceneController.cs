@@ -11,16 +11,15 @@ public class BootingSceneController : SceneController
     {
         ObjectPooling.Instance.OnLoadPoolsCompleted = Handle_OnLoadPoolsCompleted;
         ObjectPooling.Instance.Init(null);
-        UIManager.Instance.Show<LoadingPanel>()
+        UIManager.Instance.Show<LoadingTransition>()
             .OnShowCompleted(view =>
             {
-                LoadingPanel loadingPanel = view as LoadingPanel;
+                LoadingTransition loadingPanel = view as LoadingTransition;
                 if (loadingPanel != null)
                 {
                     loadingPanel.OnTapToPlayClicked += () =>
                     {
-                        CoreSceneManager.Instance.ChangeScene(ContextNameGenerated.CONTEXT_LEVEL_1);
-                        UIManager.Instance.Hide<LoadingPanel>(isDisable: true, isDestroy: true);
+                        UIManager.Instance.Hide<LoadingTransition>(isDisable: true, isDestroy: true);
                     };
                 }
             });
@@ -28,13 +27,15 @@ public class BootingSceneController : SceneController
 
     private void Handle_OnLoadPoolsCompleted()
     {
-        LoadingPanel loadingPanel = UIManager.Instance.GetCache<LoadingPanel>();
+        //LoadingPanel loadingPanel = UIManager.Instance.GetCache<LoadingPanel>();
 
-        if (loadingPanel != null)
-        {
-            loadingPanel.StartToEnableButton();
-            return;
-        }
+        //if (loadingPanel != null)
+        //{
+        //    loadingPanel.StartToEnableButton();
+        //    return;
+        //}
+
+        CoreSceneManager.Instance.ChangeScene(ContextNameGenerated.CONTEXT_LEVEL_1);
     }
 
     private IEnumerator<float> ChangeScene()

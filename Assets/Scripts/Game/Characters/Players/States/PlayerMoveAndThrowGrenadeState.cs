@@ -7,10 +7,15 @@ public class PlayerMoveAndThrowGrenadeState : PlayerStateBase
     private bool _grenadeThrown = false;
     private Vector3 _movementDirection;
 
-    public PlayerMoveAndThrowGrenadeState(Player player, PlayerStateMachine stateMachine) : base(player, stateMachine) { }
+    public PlayerMoveAndThrowGrenadeState(Player player, PlayerStateMachine stateMachine) : base(player, stateMachine)
+    {
+        PlayerState = PlayerState.MoveAndGrenade;
+    }
 
     public override void Enter()
     {
+        player.InputHandler.SetGrenade(false);
+        Debug.Log("Entering Move and Throw Grenade State");
         _grenadeTimer = 0f;
         _grenadeThrown = false;
 
@@ -18,6 +23,7 @@ public class PlayerMoveAndThrowGrenadeState : PlayerStateBase
 
         player.AnimationController.SetIsFire(false);
         player.AnimationController.TriggerThrowGrenade();
+        
     }
 
     public override void Update()

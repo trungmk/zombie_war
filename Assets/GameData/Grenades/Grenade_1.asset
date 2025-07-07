@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Grenade_1
   m_EditorClassIdentifier: 
   GrenadeName: Frag
-  Damage: 120
-  ExplosionRadius: 5
-  ExplosionForce: 700
+  Damage: 100
+  ExplosionRadius: 8
+  ExplosionForce: 500
   ThrowForce: 15
   MaxThrowDistance: 20
   CountDownTime: 2

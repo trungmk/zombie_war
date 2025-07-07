@@ -37,10 +37,32 @@ public class EnemyBehavior : BehaviorTree
         RootNode = rootSelector;
     }
 
+    public override void Tick()
+    {
+        if (_enemy == null || _enemy.HealthComponent == null || _enemy.HealthComponent.IsDead)
+        {
+            return;
+        }
+
+        if (_enemy.NavMeshAgent == null || !_enemy.NavMeshAgent.enabled)
+        {
+            return;
+        }
+
+        base.Tick();
+    }
+
     private NodeState IsPlayerInAttackRange()
     {
-        if (_enemy.PlayerTransform == null)
+        if (_enemy == null || _enemy.HealthComponent == null || _enemy.HealthComponent.IsDead)
+        {
             return NodeState.Failure;
+        }
+
+        if (_enemy.PlayerTransform == null)
+        {
+            return NodeState.Failure;
+        }
 
         float distance = Vector3.Distance(_enemy.transform.position, _enemy.PlayerTransform.position);
         if (distance <= _enemy.EnemyData.AttackRange)
@@ -55,8 +77,15 @@ public class EnemyBehavior : BehaviorTree
 
     private NodeState IsPlayerInChaseRange()
     {
-        if (_enemy.PlayerTransform == null)
+        if (_enemy == null || _enemy.HealthComponent == null || _enemy.HealthComponent.IsDead)
+        {
             return NodeState.Failure;
+        }
+
+        if (_enemy.PlayerTransform == null)
+        {
+            return NodeState.Failure;
+        }
 
         float distance = Vector3.Distance(_enemy.transform.position, _enemy.PlayerTransform.position);
 
@@ -68,5 +97,21 @@ public class EnemyBehavior : BehaviorTree
         }
 
         return NodeState.Failure;
+    }
+
+    public void OnEnemyDied()
+    {
+        if (_enemy.NavMeshAgent != null && _enemy.NavMeshAgent.enabled)
+        {
+            _enemy.NavMeshAgent.isStopped = true;
+            _enemy.NavMeshAgent.ResetPath();
+        }
+
+        _patrolNode?.ResetPatrolState();
+    }
+
+    public void OnEnemyRespawned()
+    {
+        _patrolNode?.ResetPatrolState();
     }
 }

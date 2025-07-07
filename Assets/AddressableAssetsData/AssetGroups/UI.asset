@@ -15,8 +15,18 @@ MonoBehaviour:
   m_GroupName: UI
   m_GUID: d83a0738a9a0b2d4295d190ef598766d
   m_SerializeEntries:
+  - m_GUID: 1ca8317352410774d853bd011b38cde6
+    m_Address: HealthBarEnemy
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 2478d6e49e2d9ef4090b572749da8043
     m_Address: SplashScreenPanel
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b0442731a19deb046a34d5c3c77f6dba
+    m_Address: HealthBarPlayer
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -26,7 +36,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c3584e62a83d5834e84a61371b648d9c
-    m_Address: LoadingPanel
+    m_Address: LoadingScreenTransition
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

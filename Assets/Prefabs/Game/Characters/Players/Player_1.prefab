@@ -194,7 +194,7 @@ GameObject:
   m_Layer: 0
   m_Name: ThrowTarget
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -207,7 +207,7 @@ Transform:
   m_GameObject: {fileID: 3146057001088451023}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.592, y: 1.934, z: 0.139}
+  m_LocalPosition: {x: 0.499, y: 1.776, z: 0.139}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -318,7 +318,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rigidbody: {fileID: 4759988062261493896}
   _directionOffset: 30
-  _rotationSensitivity: 0.2
+  _rotationSensitivity: 0.4
 --- !u!114 &2297476166481579304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -361,10 +361,8 @@ MonoBehaviour:
   _grenadeCount: 3
   _damageableLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
-  _grenadePoolName: Grenade
-  _trajectoryHeight: 2
-  _useObjectPooling: 1
+    m_Bits: 8192
+  _trajectoryHeight: 1
 --- !u!1 &4941040470367056382
 GameObject:
   m_ObjectHideFlags: 0
@@ -873,12 +871,7 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: e1f116b6b51b8ec44bcc484106ba9e16, type: 2}
     - target: {fileID: 8256623680921918611, guid: ebe8bbc865df70f42863e6589189de1a, type: 3}
       propertyPath: m_WarningMessage
-      value: "\nBinding warning: Some generic clip(s) animate transforms that are
-        already bound by a Humanoid avatar. These transforms can only be changed
-        by Humanoid clips.\n\tTransform 'lowerarm_l'\n\tTransform 'neck_01'\n\tTransform
-        'hand_l'\n\tTransform 'upperarm_l'\n\tTransform 'pelvis'\n\tTransform 'spine_03'\n\tTransform
-        'spine_01'\n\tTransform 'lowerarm_r'\n\tTransform 'hand_r'\n\tTransform 'lowerarm_l'\n\tand
-        more ..."
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8256623680921918611, guid: ebe8bbc865df70f42863e6589189de1a, type: 3}
       propertyPath: m_ApplyRootMotion

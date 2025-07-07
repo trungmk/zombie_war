@@ -14,8 +14,6 @@ public class LevelSceneController : SceneController
 
     public override void OnLoaded()
     {
-        
-
         MobileInput.Instance.SetInputFilter(_inputHandler);
         _inputHandler.RegisterTouchTarget(_joyStickHandler);
         UIManager.Instance.Show<InGamePanel>(_joyStickHandler)
@@ -23,21 +21,16 @@ public class LevelSceneController : SceneController
             {
                 InGamePanel inGamePanel = view as InGamePanel;
                 _inputHandler.RegisterTouchTarget(inGamePanel);
-
-                inGamePanel.OnUseGrenadeClicked = WeaponManager.Instance.Handle_EventUseGrenade;
-                inGamePanel.OnSwapWeaponClicked = WeaponManager.Instance.Handle_EventSwapWeapon;
-
-                Player player = _gameManager.Player;
-                inGamePanel.SetupPlayerHealthBar(player);
+                inGamePanel.OnSwapWeaponClicked = WeaponManager.Instance.Handle_EventSwapWeapon;;
             });
 
         _gameManager.StartGame((player) =>
         {
-            SetupHealthBarForPlayer(player).Forget();
+            SetupUI(player).Forget();
         });
     }
 
-    private async UniTaskVoid SetupHealthBarForPlayer(Player player)
+    private async UniTaskVoid SetupUI(Player player)
     {
         while(UIManager.Instance.GetCache<InGamePanel>() == null)
         {
@@ -46,6 +39,14 @@ public class LevelSceneController : SceneController
 
         InGamePanel inGamePanel = UIManager.Instance.GetCache<InGamePanel>();
         inGamePanel.SetupPlayerHealthBar(player);
+        inGamePanel.OnUseGrenadeClicked = player.GetComponent<PlayerInputHandler>().OnGrenadeButton;
+
+        LoadingTransition loadingPanel = UIManager.Instance.GetCache<LoadingTransition>();
+        if (loadingPanel != null)
+        {
+            loadingPanel.StartToEnableButton();
+            return;
+        }
     }
 
     public override void OnUnloaded()

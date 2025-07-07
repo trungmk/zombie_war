@@ -74,7 +74,7 @@ public class PlayerStateMachine : MonoBehaviour
         _currentState.HandleInput(input);
         PlayerState? nextState = _currentState.CheckTransitions(input);
 
-        if (nextState.HasValue)
+        if (nextState.HasValue && _currentState.PlayerState != nextState)
         {
             ChangeState(nextState.Value);
         }

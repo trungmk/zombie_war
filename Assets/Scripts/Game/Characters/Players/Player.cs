@@ -28,7 +28,7 @@ public class Player : BaseCharacter, ITakeDamage
     {
         Movement.Setup(PlayerData.MoveSpeed, PlayerData.RotationSpeed);
         Shooting.Setup(this);
-        Grenade.Setup();
+        Grenade.Setup(this);
 
         Health.Setup(PlayerData.MaxHealth);
         Health.OnHealthChanged = Handle_OnHealthChanged;

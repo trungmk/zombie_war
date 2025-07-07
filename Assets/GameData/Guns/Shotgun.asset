@@ -15,7 +15,7 @@ MonoBehaviour:
   WeaponName: Shotgun
   GunType: 2
   Damage: 50
-  FireRate: 0.8
+  FireRate: 0.75
   BulletSpeed: 40
   Range: 25
   IsAutomatic: 1
