@@ -46,20 +46,17 @@ public class EnemyChaseNode : LeafNode
             return NodeState.Failure;
         }
 
-        var attackNode = _enemy.EnemyAI.BehaviorTree.GetAttackNode();
-        if (attackNode != null && attackNode.IsAttacking())
-        {
-            return NodeState.Failure;
-        }
-
         StartChasing();
-
         return NodeState.Running;
     }
 
     private void StartChasing()
     {
-        _enemy.NavMeshAgent.isStopped = false;
+        if (_enemy.NavMeshAgent.isStopped)
+        {
+            _enemy.NavMeshAgent.isStopped = false;
+        }
+
         _enemy.NavMeshAgent.updatePosition = true;
         _enemy.NavMeshAgent.updateRotation = true;
         _enemy.NavMeshAgent.speed = _enemy.EnemyData.ChaseSpeed;
@@ -69,7 +66,5 @@ public class EnemyChaseNode : LeafNode
         {
             _enemy.Animator.SetBool("IsRunning", true);
         }
-
-        Debug.Log($"Enemy {_enemy.name} chasing target");
     }
 }

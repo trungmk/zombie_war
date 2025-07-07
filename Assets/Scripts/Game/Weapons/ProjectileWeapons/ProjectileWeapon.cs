@@ -12,6 +12,9 @@ public class ProjectileWeapon : Weapon
     private Transform _firePoint;
 
     [SerializeField]
+    private Transform _laserStartPoint;
+
+    [SerializeField]
     private Laser _laserSight;
 
     [SerializeField]
@@ -42,10 +45,10 @@ public class ProjectileWeapon : Weapon
 
     private void Update()
     {
-        if (_laserSight != null && _laserSight.IsVisible && _firePoint != null)
+        if (_laserSight != null && _laserSight.IsVisible && _laserStartPoint != null)
         {
             Vector3 laserDirection = _rotationOffsetQuaternion * _playerTransform.forward;
-            _laserSight.UpdateLaser(_firePoint.position, laserDirection);
+            _laserSight.UpdateLaser(_laserStartPoint.position, laserDirection);
         }
 
         if (_isFiring)

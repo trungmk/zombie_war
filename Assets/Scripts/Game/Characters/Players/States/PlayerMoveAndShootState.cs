@@ -27,6 +27,13 @@ public class PlayerMoveAndShootState : PlayerStateBase
 
     public override void HandleInput(PlayerInputData input)
     {
+        if(!input.IsMoving)
+        {
+            player.Movement.Move(Vector3.zero);
+            player.AnimationController.SetMovement(0f);
+            stateMachine.ChangeState(PlayerState.Shoot);
+        }
+
         _movementDirection = new Vector3(input.MovementInput.x, 0, input.MovementInput.y);
         _aimingDirection = new Vector3(input.AimingInput.x, 0, input.AimingInput.y);
     }
@@ -38,11 +45,6 @@ public class PlayerMoveAndShootState : PlayerStateBase
             player.Movement.Move(_movementDirection);
             float speed = _movementDirection.magnitude * 4f;
             player.AnimationController.SetMovement(speed);
-        }
-        else
-        {
-            player.Movement.Move(Vector3.zero);
-            player.AnimationController.SetMovement(0f);
         }
 
         if (_aimingDirection.magnitude > 0.01f)

@@ -4,10 +4,10 @@ public class EnemyBehavior : BehaviorTree
 {
     private Enemy _enemy;
     private Transform _currentTarget;
-
     private EnemyAttackNode _attackNode;
     private EnemyChaseNode _chaseNode;
     private EnemyPatrolNode _patrolNode;
+    private string _lastActiveNode = "";
 
     public EnemyBehavior(Enemy enemy)
     {
@@ -20,7 +20,13 @@ public class EnemyBehavior : BehaviorTree
         _attackNode = new EnemyAttackNode(_enemy, _currentTarget);
         _chaseNode = new EnemyChaseNode(_enemy, _currentTarget);
         _patrolNode = new EnemyPatrolNode(_enemy);
-        var rootSelector = new SelectorNode(_attackNode, _chaseNode, _patrolNode);
+
+        var rootSelector = new SelectorNode(
+            _attackNode,
+            _chaseNode,
+            _patrolNode
+        );
+
         RootNode = rootSelector;
     }
 
@@ -37,16 +43,41 @@ public class EnemyBehavior : BehaviorTree
         }
 
         UpdateCurrentTarget();
-
         _attackNode.SetTarget(_currentTarget);
         _chaseNode.SetTarget(_currentTarget);
 
-        base.Tick();
+        string previousNode = _lastActiveNode;
+        NodeState result = RootNode.Run();
+        TrackActiveNode();
     }
 
-    public EnemyAttackNode GetAttackNode()
+    private void TrackActiveNode()
     {
-        return _attackNode;
+        if (_currentTarget != null)
+        {
+            float distance = Vector3.Distance(_enemy.transform.position, _currentTarget.position);
+
+            if (_attackNode.IsAttacking())
+            {
+                _lastActiveNode = "ATTACK (Sequence)";
+            }
+            else if (distance <= _enemy.EnemyData.AttackRange)
+            {
+                _lastActiveNode = "ATTACK (Range)";
+            }
+            else if (distance <= _enemy.EnemyData.ChaseRange)
+            {
+                _lastActiveNode = "CHASE";
+            }
+            else
+            {
+                _lastActiveNode = "PATROL";
+            }
+        }
+        else
+        {
+            _lastActiveNode = "PATROL (No Target)";
+        }
     }
 
     private void UpdateCurrentTarget()
@@ -59,6 +90,11 @@ public class EnemyBehavior : BehaviorTree
         {
             _currentTarget = null;
         }
+    }
+
+    public EnemyAttackNode GetAttackNode()
+    {
+        return _attackNode;
     }
 
     public void OnEnemyDied()

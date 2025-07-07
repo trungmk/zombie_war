@@ -6,6 +6,10 @@ public class EnemyPatrolNode : LeafNode
     private int _currentWaypointIndex = 0;
     private float _waypointWaitTimer = 0f;
     private bool _isWaitingAtWaypoint = false;
+    private bool _isIdle = false;
+    private float _idleTimer = 0f;
+    private Vector3 _originalPosition;
+    private bool _hasSetOriginalPosition = false;
 
     private const string IS_RUNNING_PARAM = "IsRunning";
 
@@ -29,7 +33,7 @@ public class EnemyPatrolNode : LeafNode
 
         if (_enemy.Waypoints == null || _enemy.Waypoints.Length == 0)
         {
-            return NodeState.Failure;
+            return HandleIdleBehavior();
         }
 
         _enemy.NavMeshAgent.speed = _enemy.EnemyData.PatrolSpeed;
@@ -80,10 +84,36 @@ public class EnemyPatrolNode : LeafNode
         return NodeState.Running;
     }
 
+    private NodeState HandleIdleBehavior()
+    {
+        if (!_hasSetOriginalPosition)
+        {
+            _originalPosition = _enemy.transform.position;
+            _hasSetOriginalPosition = true;
+        }
+
+        if (_enemy.NavMeshAgent.isStopped == false)
+        {
+            _enemy.NavMeshAgent.isStopped = true;
+            _enemy.NavMeshAgent.ResetPath();
+        }
+
+        if (_enemy.Animator != null && _enemy.Animator.enabled)
+        {
+            _enemy.Animator.SetBool(IS_RUNNING_PARAM, false);
+        }
+
+        _idleTimer += Time.deltaTime;
+        return NodeState.Success;
+    }
+
     public void ResetPatrolState()
     {
         _currentWaypointIndex = 0;
         _waypointWaitTimer = 0f;
         _isWaitingAtWaypoint = false;
+        _isIdle = false;
+        _idleTimer = 0f;
+        _hasSetOriginalPosition = false;
     }
 }

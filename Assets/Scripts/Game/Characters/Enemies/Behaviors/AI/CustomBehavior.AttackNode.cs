@@ -7,7 +7,7 @@ public class EnemyAttackNode : LeafNode
     private float _lastAttackTime = -999f;
     private bool _isInAttackSequence = false;
     private float _attackSequenceTimer = 0f;
-    private const float ATTACK_SEQUENCE_DURATION = 1.5f;
+    private const float ATTACK_SEQUENCE_DURATION = 1.0f;
 
     public EnemyAttackNode(Enemy enemy, Transform currentTarget) : base(null)
     {
@@ -23,7 +23,6 @@ public class EnemyAttackNode : LeafNode
 
     private NodeState AttackPlayer()
     {
-        // Early exit checks
         if (_enemy == null || _enemy.HealthComponent == null || _enemy.HealthComponent.IsDead)
         {
             ResetAttackState();
@@ -44,39 +43,33 @@ public class EnemyAttackNode : LeafNode
 
         float distanceToPlayer = Vector3.Distance(_enemy.transform.position, _currentTarget.position);
 
-        if (distanceToPlayer > _enemy.EnemyData.AttackRange && !_isInAttackSequence)
-        {
-            ResetAttackState();
-            return NodeState.Failure;
-        }
-
         if (_isInAttackSequence)
         {
             _attackSequenceTimer += Time.deltaTime;
+            ForceStopMovement();
+
             if (_attackSequenceTimer >= ATTACK_SEQUENCE_DURATION)
             {
+                CheckFinalPositionAndDealDamage();
                 ResetAttackState();
-                return NodeState.Success; 
+                return NodeState.Success;
             }
 
-            return NodeState.Running; 
+            return NodeState.Running;
         }
 
-        if (distanceToPlayer <= _enemy.EnemyData.AttackRange &&
-            Time.time - _lastAttackTime >= _enemy.EnemyData.AttackCooldown)
+        if (distanceToPlayer > _enemy.EnemyData.AttackRange)
         {
-            StartAttackSequence();
+            return NodeState.Failure;
         }
 
-        _enemy.NavMeshAgent.isStopped = true;
-        _enemy.NavMeshAgent.ResetPath();
-        _enemy.NavMeshAgent.velocity = Vector3.zero;
-        _enemy.NavMeshAgent.updatePosition = false;
-        _enemy.NavMeshAgent.updateRotation = false;
+        if (Time.time - _lastAttackTime < _enemy.EnemyData.AttackCooldown)
+        {
+            return NodeState.Running;
+        }
 
-        RotateTowardsTarget();
-
-        return _isInAttackSequence ? NodeState.Running : NodeState.Success;
+        StartAttackSequence();
+        return NodeState.Running;
     }
 
     private void StartAttackSequence()
@@ -85,15 +78,57 @@ public class EnemyAttackNode : LeafNode
         _attackSequenceTimer = 0f;
         _lastAttackTime = Time.time;
 
-        _enemy.AttackPlayer();
+        ForceStopMovement();
+        RotateTowardsTarget();
 
         if (_enemy.Animator != null && _enemy.Animator.enabled)
         {
             _enemy.Animator.SetTrigger("Attack");
-            _enemy.Animator.SetBool("IsRunning", false);
         }
 
-        Debug.Log($"Enemy {_enemy.name} started attack sequence");
+        if (_enemy.AudioSource != null && _enemy.EnemyData.AttackSound != null)
+        {
+            _enemy.AudioSource.PlayOneShot(_enemy.EnemyData.AttackSound);
+        }
+
+        _enemy.OnEnemyAttack?.Invoke(_enemy);
+    }
+
+    private void ForceStopMovement()
+    {
+        if (_enemy.NavMeshAgent != null && _enemy.NavMeshAgent.enabled)
+        {
+            
+            _enemy.NavMeshAgent.SetDestination(_enemy.transform.position);
+            _enemy.NavMeshAgent.isStopped = true;
+            _enemy.NavMeshAgent.velocity = Vector3.zero;
+            _enemy.NavMeshAgent.updatePosition = false;
+            _enemy.NavMeshAgent.updateRotation = false;
+        }
+
+        if (_enemy.Animator != null && _enemy.Animator.enabled)
+        {
+            _enemy.Animator.SetBool("IsRunning", false);
+        }
+    }
+
+    private void CheckFinalPositionAndDealDamage()
+    {
+        if (_currentTarget == null)
+        {
+            return;
+        }
+
+        float finalDistance = Vector3.Distance(_enemy.transform.position, _currentTarget.position);
+
+        if (finalDistance <= _enemy.EnemyData.AttackRange)
+        {
+            var playerHealth = _currentTarget.GetComponent<ITakeDamage>();
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(_enemy.EnemyData.AttackDamage);
+            }
+        }
     }
 
     private void RotateTowardsTarget()
@@ -115,8 +150,6 @@ public class EnemyAttackNode : LeafNode
 
         if (_enemy.NavMeshAgent != null && _enemy.NavMeshAgent.enabled)
         {
-            _enemy.NavMeshAgent.updatePosition = true;
-            _enemy.NavMeshAgent.updateRotation = true;
             _enemy.NavMeshAgent.isStopped = false;
         }
     }

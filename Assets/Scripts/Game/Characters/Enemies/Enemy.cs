@@ -50,6 +50,8 @@ public class Enemy : BaseCharacter, ITakeDamage
     public Rigidbody Rigidbody => _rigidbody;
     public Animator Animator => _animator;
 
+    public AudioSource AudioSource => _audioSource;
+
     public Action<Enemy> OnEnemyDied { get; set; }
     public Action<Enemy> OnEnemyAttack { get; set; }
     public Action<int, int> OnEnemyTakeDamage { get; set; }
@@ -217,16 +219,6 @@ public class Enemy : BaseCharacter, ITakeDamage
         if (_audioSource != null && _enemyData.AttackSound != null)
         {
             _audioSource.PlayOneShot(_enemyData.AttackSound);
-        }
-
-        float distanceToPlayer = Vector3.Distance(transform.position, PlayerTransform.position);
-        if (distanceToPlayer <= _enemyData.AttackRange)
-        {
-            var playerHealth = PlayerTransform.GetComponent<ITakeDamage>();
-            if (playerHealth != null)
-            {
-                playerHealth.TakeDamage(_enemyData.AttackDamage);
-            }
         }
 
         OnEnemyAttack?.Invoke(this);

@@ -16,7 +16,7 @@ MonoBehaviour:
   GunType: 2
   Damage: 15
   FireRate: 0.75
-  BulletSpeed: 40
+  BulletSpeed: 30
   Range: 25
   IsAutomatic: 1
   RecoilSpread: 3
