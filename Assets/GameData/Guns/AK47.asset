@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WeaponName: AK47
   GunType: 1
-  Damage: 25
+  Damage: 5
   FireRate: 0.1
   BulletSpeed: 40
   Range: 50

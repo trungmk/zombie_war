@@ -38,6 +38,9 @@ public class Enemy : BaseCharacter, ITakeDamage
     [SerializeField]
     private ParticleSystem _hitFX;
 
+    [SerializeField]
+    private DissolveMesh _dissolveMesh;
+
     public EnemyData EnemyData => _enemyData;
     public NavMeshAgent NavMeshAgent => _navMeshAgent;
     public HealthComponent HealthComponent => _healthComponent;
@@ -47,20 +50,26 @@ public class Enemy : BaseCharacter, ITakeDamage
     public Rigidbody Rigidbody => _rigidbody;
     public Animator Animator => _animator;
 
-    public Action<Enemy> OnEnemyDied;
-    public Action<Enemy> OnEnemyAttack;
-    public Action<int, int> OnEnemyTakeDamage;
+    public Action<Enemy> OnEnemyDied { get; set; }
+    public Action<Enemy> OnEnemyAttack { get; set; }
+    public Action<int, int> OnEnemyTakeDamage { get; set; }
 
     private bool _hasValidNavMesh = false;
+    private PooledMono _pooledMono;
+    private CapsuleCollider _capsuleCollider;
 
     private void Awake()
     {
+        _pooledMono = GetComponent<PooledMono>();
+        _capsuleCollider = GetComponent<CapsuleCollider>();
         CheckNavMeshValidity();
     }
 
     private void OnEnable()
     {
         _animator.applyRootMotion = false;
+        _capsuleCollider.enabled = true;
+        _dissolveMesh.ResetValues();
         CheckNavMeshValidity();
     }
 
@@ -102,7 +111,6 @@ public class Enemy : BaseCharacter, ITakeDamage
             return;
         }
 
-        // Setup health component
         _healthComponent.Setup(_enemyData.MaxHealth);
         _healthComponent.OnDied += Handle_OnDied;
         _healthComponent.OnHealthChanged += Handle_OnHealthChanged;
@@ -114,7 +122,6 @@ public class Enemy : BaseCharacter, ITakeDamage
             _navMeshAgent.stoppingDistance = _enemyData.WaypointStoppingDistance;
         }
 
-        // Initialize AI
         if (_enemyAI != null)
         {
             _enemyAI.Initialize(this);
@@ -141,17 +148,37 @@ public class Enemy : BaseCharacter, ITakeDamage
         }
 
         _animator.applyRootMotion = true;
+        _capsuleCollider.enabled = false;
 
         Animator.SetBool("IsRunning", false);
         Animator.SetTrigger("Die");
-
-        // Play death FX
         PlayDeathFX().Forget();
 
-        if (_enemyAI != null) _enemyAI.enabled = false;
-        if (_navMeshAgent != null) _navMeshAgent.enabled = false;
+        if (_enemyAI != null)
+        {
+            _enemyAI.enabled = false;
+        } 
+            
+        if (_navMeshAgent != null)
+        {
+            _navMeshAgent.enabled = false;
+        } 
+            
 
         OnEnemyDied?.Invoke(this);
+        ReturnToPool().Forget();
+    }
+
+    private async UniTaskVoid ReturnToPool()
+    {
+        if (_dissolveMesh != null)
+        {
+            _dissolveMesh.StartToDissolve();
+        }
+        
+        await UniTask.WaitForSeconds(5f);
+
+        _pooledMono.ReturnToPool();
     }
 
     private async UniTaskVoid PlayDeathFX()

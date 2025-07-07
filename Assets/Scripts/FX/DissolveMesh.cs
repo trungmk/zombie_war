@@ -1,38 +1,60 @@
+using MEC;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Renderer))]
 public class DissolveMesh : MonoBehaviour
 {
-    public Texture2D dissolveTexture;
-    public Color dissolveColor = Color.red;
-    public float delayBeforeStart = 3f;
-    public float dissolveTime = 2f;
+    [SerializeField]
+    private Texture2D _dissolveTexture;
 
-    private Material material;
+    [SerializeField]
+    public Color _dissolveColor = Color.red;
+
+    [SerializeField]
+    public float _delayBeforeStart = 2f;
+
+    [SerializeField]
+    public float _dissolveTime = 2f;
+
+    private Material _material;
+
     private float dissolveProgress = 0.3f;
 
-    private void Start()
+    private void Awake()
     {
-        StartCoroutine(DissolveAfterDelay());
+        _material = GetComponent<Renderer>().material;
     }
 
-    private IEnumerator DissolveAfterDelay()
+    private IEnumerator<float> DissolveAfterDelay()
     {
-        yield return new WaitForSeconds(delayBeforeStart);
+        yield return Timing.WaitForSeconds(_delayBeforeStart);
 
-        material = GetComponent<Renderer>().material;
-        material.shader = Shader.Find("Custom/Dissolve");
-        material.SetTexture("_DissolveTex", dissolveTexture);
-        material.SetColor("_DissolveColor", dissolveColor);
+        _material = GetComponent<Renderer>().material;
+        _material.shader = Shader.Find("Custom/Dissolve");
+        _material.SetTexture("_DissolveTex", _dissolveTexture);
+        _material.SetColor("_DissolveColor", _dissolveColor);
 
         while (dissolveProgress < 1f)
         {
-            dissolveProgress += Time.deltaTime / dissolveTime;
-            material.SetFloat("_DissolveThreshold", dissolveProgress);
-            yield return null;
+            dissolveProgress += Time.deltaTime / _dissolveTime;
+            _material.SetFloat("_DissolveThreshold", dissolveProgress);
+            yield return Timing.WaitForOneFrame;
         }
+    }
 
-        Destroy(gameObject);
+    public void StartToDissolve()
+    {
+        _material.SetFloat("_DissolveThreshold", 0);
+        Timing.RunCoroutine(DissolveAfterDelay());
+    }
+
+    public void ResetValues()
+    {
+        if (_material != null)
+        {
+            _material.SetFloat("_DissolveThreshold", 0);
+        }
     }
 }

@@ -28,10 +28,7 @@ public class EnemyAI : MonoBehaviour
 
     private void OnEnemyDied()
     {
-        if(_behaviorTree != null)
-        {
-            _behaviorTree.OnEnemyDied();
-        }
+        _behaviorTree?.OnEnemyDied();
     }
 
     private void OnDestroy()

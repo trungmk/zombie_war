@@ -66,15 +66,18 @@ public class PlayerMoveAndShootState : PlayerStateBase
             else
                 return PlayerState.ThrowGrenade;
         }
-
         if (!input.IsMoving && !input.ShootTriggered)
+        {
             return PlayerState.Idle;
-
-        if (!input.IsMoving)
-            return PlayerState.Shoot;
-
-        if (!input.ShootTriggered)
+        }     
+        if (input.IsMoving && !input.ShootTriggered)
+        {
             return PlayerState.Move;
+        }
+        if (!input.IsMoving && input.ShootTriggered)
+        {
+            return PlayerState.Shoot;
+        }
 
         return null;
     }

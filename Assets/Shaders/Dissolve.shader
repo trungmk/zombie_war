@@ -23,7 +23,6 @@ Shader "Custom/Dissolve" {
 
                 struct v2f {
                     float2 uv : TEXCOORD0;
-                    UNITY_FOG_COORDS(1)
                     float4 vertex : SV_POSITION;
                 };
 
@@ -35,28 +34,23 @@ Shader "Custom/Dissolve" {
                     v2f o;
                     o.vertex = UnityObjectToClipPos(v.vertex);
                     o.uv = v.uv;
-                    UNITY_TRANSFER_FOG(o,o.vertex);
                     return o;
                 }
 
-                fixed4 frag(v2f i) : SV_Target {
-                    float noiseScale = 1.0;
-                    fixed noise = frac(sin(dot(i.uv * noiseScale ,float2(12.9898,78.233))) * 43758.5453);
-                    noise = noise * 0.5 + 0.5; // Remap the noise
+                float rand(float2 co) {
+                    return frac(sin(dot(co, float2(12.9898, 78.233))) * 43758.5453);
+                }
 
-                    fixed4 col = tex2D(_MainTex, i.uv);
-                    fixed4 edgeCol = _EdgeColor;
-                    edgeCol.a = col.a;
+                fixed4 frag(v2f i) : SV_Target {
+                    float noiseScale = 2.0;
+                    float2 seed = i.uv * noiseScale + _Time.x;  
+                    fixed noise = rand(seed);
 
                     if (noise < _DissolveThreshold) {
                         clip(-1);
                     }
-                    else if (noise < _DissolveThreshold + 0.1) {
-                        return edgeCol;
-                    }
 
-                    UNITY_APPLY_FOG(i.fogCoord, col);
-                    return col;
+                    return tex2D(_MainTex, i.uv);
                 }
                 ENDCG
             }

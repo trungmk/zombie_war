@@ -35,6 +35,7 @@ public class EnemyChaseNode : LeafNode
         }
 
         float distance = Vector3.Distance(_enemy.transform.position, _currentTarget.position);
+
         if (distance > _enemy.EnemyData.ChaseRange)
         {
             return NodeState.Failure;
@@ -45,11 +46,22 @@ public class EnemyChaseNode : LeafNode
             return NodeState.Failure;
         }
 
-        if (_enemy.NavMeshAgent.isStopped)
+        var attackNode = _enemy.EnemyAI.BehaviorTree.GetAttackNode();
+        if (attackNode != null && attackNode.IsAttacking())
         {
-            _enemy.NavMeshAgent.isStopped = false;
+            return NodeState.Failure;
         }
 
+        StartChasing();
+
+        return NodeState.Running;
+    }
+
+    private void StartChasing()
+    {
+        _enemy.NavMeshAgent.isStopped = false;
+        _enemy.NavMeshAgent.updatePosition = true;
+        _enemy.NavMeshAgent.updateRotation = true;
         _enemy.NavMeshAgent.speed = _enemy.EnemyData.ChaseSpeed;
         _enemy.NavMeshAgent.SetDestination(_currentTarget.position);
 
@@ -58,6 +70,6 @@ public class EnemyChaseNode : LeafNode
             _enemy.Animator.SetBool("IsRunning", true);
         }
 
-        return NodeState.Running;
+        Debug.Log($"Enemy {_enemy.name} chasing target");
     }
 }

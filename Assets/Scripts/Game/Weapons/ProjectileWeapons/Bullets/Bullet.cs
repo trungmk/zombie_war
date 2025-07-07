@@ -41,10 +41,10 @@ public class Bullet : PooledMono
             _hitEffect.gameObject.SetActive(false);
         }
 
-        if (_direction != Vector3.zero)
-        {
-            transform.rotation = Quaternion.LookRotation(_direction);
-        }
+        //if (_direction != Vector3.zero)
+        //{
+        //    transform.rotation = Quaternion.LookRotation(_direction);
+        //}
 
         _isInitialized = true;
     }

@@ -80,44 +80,29 @@ public class WaveSpawner : MonoBehaviour
 
         Transform spawnPoint = _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Length)];
         Vector3 spawnPosition = GetValidSpawnPosition(spawnPoint.position);
-
         string enemyAddressName = GetEnemyAddressName(chosenZombieData.enemyType);
+        GameObject enemy = await ObjectPooling.Instance.Get(enemyAddressName, PoolItemType.Enemy);
 
-        try
+        if (enemy != null)
         {
-            GameObject enemy = await ObjectPooling.Instance.Get(enemyAddressName, PoolItemType.Enemy);
+            enemy.transform.position = spawnPosition;
+            enemy.transform.rotation = Quaternion.identity;
 
-            if (enemy != null)
+            var enemyComponent = enemy.GetComponent<Enemy>();
+            if (enemyComponent != null)
             {
-                enemy.transform.position = spawnPosition;
-                enemy.transform.rotation = Quaternion.identity;
-
-                var enemyComponent = enemy.GetComponent<Enemy>();
-                if (enemyComponent != null)
+                enemyComponent.Initialize();
+                InGamePanel inGamePanel = UIManager.Instance.GetCache<InGamePanel>();
+                if (inGamePanel != null)
                 {
-                    enemyComponent.Initialize();
-                    InGamePanel inGamePanel = UIManager.Instance.GetCache<InGamePanel>();
-                    if(inGamePanel != null)
-                    {
-                        inGamePanel.RegisterEnemy(enemyComponent);
-                    }
+                    inGamePanel.RegisterEnemy(enemyComponent);
                 }
-
-                _zombiesSpawned++;
-                _spawnedCountByType[chosenZombieData.enemyType]++;
-
-                OnZombieSpawned?.Invoke(enemy);
-
-                Debug.Log($"Spawned {chosenZombieData.enemyType} at {spawnPosition}. Total spawned: {_zombiesSpawned}");
             }
-            else
-            {
-                Debug.LogError($"Failed to spawn enemy: {enemyAddressName}");
-            }
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($"Error spawning enemy {enemyAddressName}: {e.Message}");
+
+            _zombiesSpawned++;
+            _spawnedCountByType[chosenZombieData.enemyType]++;
+
+            OnZombieSpawned?.Invoke(enemy);
         }
     }
 

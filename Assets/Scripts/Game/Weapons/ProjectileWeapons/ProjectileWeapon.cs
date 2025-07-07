@@ -181,11 +181,17 @@ public class ProjectileWeapon : Weapon
 
     private async UniTaskVoid FireShotgun(Vector3 direction)
     {
+        Bullet[] bullets = new Bullet[_weaponData.PelletsPerShot];
         for (int i = 0; i < _weaponData.PelletsPerShot; i++)
         {
             Vector3 spreadDirection = CalculateSpreadDirection(direction);
             Bullet bullet = await CreateBullet(spreadDirection);
-            bullet.Initialize(direction, _weaponData);
+            bullets[i] = bullet;
+        }
+
+        for (int i = 0; i < bullets.Length; i++)
+        {
+            bullets[i].Initialize(direction, _weaponData);
         }
 
         if (_muzzleFlash != null)

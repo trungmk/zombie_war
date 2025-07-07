@@ -14,7 +14,6 @@ public class PlayerMoveAndThrowGrenadeState : PlayerStateBase
 
     public override void Enter()
     {
-        player.InputHandler.SetGrenade(false);
         Debug.Log("Entering Move and Throw Grenade State");
         _grenadeTimer = 0f;
         _grenadeThrown = false;
@@ -23,7 +22,7 @@ public class PlayerMoveAndThrowGrenadeState : PlayerStateBase
 
         player.AnimationController.SetIsFire(false);
         player.AnimationController.TriggerThrowGrenade();
-        
+        player.InputHandler.SetGrenade(false);
     }
 
     public override void Update()
