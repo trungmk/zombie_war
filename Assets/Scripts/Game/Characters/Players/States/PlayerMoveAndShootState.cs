@@ -67,7 +67,7 @@ public class PlayerMoveAndShootState : PlayerStateBase
             Vector3 localAiming = player.transform.InverseTransformDirection(_aimingDirection.normalized);
 
             float forwardComponent = Vector3.Dot(localMovement, localAiming);
-            float rightComponent = Vector3.Cross(localAiming, localMovement).y;
+            float rightComponent = Vector3.Cross(localMovement, localAiming).y;
 
             Vector3 adjustedDirection = new Vector3(rightComponent, 0, forwardComponent);
             return adjustedDirection * 4f;
