@@ -61,6 +61,8 @@ public class WeaponManager : MonoSingleton<WeaponManager>
 
             _projectileWeapons.Add(projectileWeapon);
         }
+
+        LoadGrenade().Forget();
     }
 
     public void Init()
