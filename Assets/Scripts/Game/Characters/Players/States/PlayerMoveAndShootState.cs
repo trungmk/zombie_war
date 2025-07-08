@@ -30,7 +30,6 @@ public class PlayerMoveAndShootState : PlayerStateBase
         {
             player.Movement.Move(Vector3.zero);
             player.AnimationController.SetMovement(Vector3.zero);
-            player.AnimationController.SetIsMoving(false);
             stateMachine.ChangeState(PlayerState.Shoot);
         }
 
@@ -43,7 +42,7 @@ public class PlayerMoveAndShootState : PlayerStateBase
         if (_movementDirection.magnitude > 0.01f)
         {
             player.Movement.Move(_movementDirection);
-            Vector3 animationDirection = _movementDirection * 3f;
+            Vector3 animationDirection = _movementDirection * 4f;
             player.AnimationController.SetMovement(animationDirection);
         }
 

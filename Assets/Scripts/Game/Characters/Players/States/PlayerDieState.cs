@@ -11,7 +11,7 @@ public class PlayerDieState : PlayerStateBase
     {
         player.Movement.StopMovement();
         player.Shooting.StopShooting();
-        //player.AnimationController.SetState(PlayerState.Die);
+        player.AnimationController.SetDie();
     }
 
     public override void HandleInput(PlayerInputData input) { }

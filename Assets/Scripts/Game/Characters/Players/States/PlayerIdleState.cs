@@ -12,7 +12,6 @@ public class PlayerIdleState : PlayerStateBase
     {
         player.Movement.StopMovement();
         player.AnimationController.SetMovement(Vector2.zero);
-        player.AnimationController.SetIsMoving(false);
 
         WeaponManager.Instance.OnUseGrenade += HandleGrenadeInput;
     }

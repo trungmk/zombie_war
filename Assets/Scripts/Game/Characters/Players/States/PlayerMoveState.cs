@@ -8,7 +8,6 @@ public class PlayerMoveState : PlayerStateBase
     {
         PlayerState = PlayerState.Move;
         _direction = Vector3.zero;
-        player.AnimationController.SetIsMoving(true);
     }
 
     public override void HandleInput(PlayerInputData input)
@@ -19,9 +18,8 @@ public class PlayerMoveState : PlayerStateBase
     public override void FixedUpdate()
     {
         player.Movement.MoveAndRotate(_direction);
-        Vector3 animationDirection = new Vector3(0, 0, _direction.magnitude * 3f);
+        Vector3 animationDirection = new Vector3(0, 0, _direction.magnitude * 4f);
         player.AnimationController.SetMovement(animationDirection);
-        player.AnimationController.SetIsMoving(true);
     }
 
     public override PlayerState? CheckTransitions(PlayerInputData input)

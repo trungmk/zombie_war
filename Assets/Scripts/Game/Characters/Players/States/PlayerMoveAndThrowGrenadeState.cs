@@ -55,9 +55,8 @@ public class PlayerMoveAndThrowGrenadeState : PlayerStateBase
     {
         player.Movement.MoveAndRotate(_movementDirection);
 
-        Vector3 animationDirection = _movementDirection * 3f;
+        Vector3 animationDirection = _movementDirection * 4f;
         player.AnimationController.SetMovement(animationDirection);
-        player.AnimationController.SetIsMoving(true);
     }
 
     public override PlayerState? CheckTransitions(PlayerInputData input)

@@ -16,7 +16,8 @@ public class PlayerAnimationController : MonoBehaviour
     private const string WEAPONTYPE_PARAM = "WeaponType";
     private const string IS_FIRING_PARAM = "IsFire";
     private const string CHANGE_WEAPON = "ChangeWeapon";
-    private const string IS_MOVING_PARAM = "IsMoving";
+    //private const string IS_MOVING_PARAM = "IsMoving";
+    private const string DIE = "Die";
 
     private int _grenadeHash;
     private int _movementXHash;
@@ -24,7 +25,7 @@ public class PlayerAnimationController : MonoBehaviour
     private int _weaponTypeHash;
     private int _fireHash;
     private int _changeWeaponHash;
-    private int _isMovingHash;
+    private int _dieHash;
 
     public Action OnStartThrowGrenade { get; set; }
 
@@ -37,7 +38,7 @@ public class PlayerAnimationController : MonoBehaviour
         _weaponTypeHash = Animator.StringToHash(WEAPONTYPE_PARAM);
         _fireHash = Animator.StringToHash(IS_FIRING_PARAM);
         _changeWeaponHash = Animator.StringToHash(CHANGE_WEAPON);
-        _isMovingHash = Animator.StringToHash(IS_MOVING_PARAM);
+        _dieHash = Animator.StringToHash(DIE);
 
         StartRig();
     }
@@ -52,11 +53,6 @@ public class PlayerAnimationController : MonoBehaviour
     {
         _animator.SetFloat(_movementXHash, direction.x);
         _animator.SetFloat(_movementZHash, direction.z); 
-    }
-
-    public void SetIsMoving(bool isMoving)
-    {
-        _animator.SetBool(_isMovingHash, isMoving);
     }
 
     public void SetIsFire(bool isFire)
@@ -92,6 +88,11 @@ public class PlayerAnimationController : MonoBehaviour
             OnStartThrowGrenade();
         }
     }
+
+    public void SetDie()
+    {
+        _animator.SetTrigger(_dieHash);
+    }    
 
     public void StopRig()
     {

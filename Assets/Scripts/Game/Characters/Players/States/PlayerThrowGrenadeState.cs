@@ -3,7 +3,6 @@
 public class PlayerThrowGrenadeState : PlayerStateBase
 {
     private float _grenadeTimer;
-    private float _grenadeThrowDelay = 0.5f;
     private bool _grenadeThrown = false;
 
     public PlayerThrowGrenadeState(Player player, PlayerStateMachine stateMachine) : base(player, stateMachine)
@@ -19,27 +18,17 @@ public class PlayerThrowGrenadeState : PlayerStateBase
 
         player.Shooting.StopShooting();
         player.AnimationController.TriggerThrowGrenade();
-
-        if (player.AnimationController.OnStartThrowGrenade != null)
-        {
-            player.AnimationController.OnStartThrowGrenade += ThrowGrenadeEvent;
-        }
+        player.AnimationController.OnStartThrowGrenade += ThrowGrenadeEvent;
     }
 
     public override void Update()
     {
         _grenadeTimer += Time.deltaTime;
-
-        if (!_grenadeThrown && _grenadeTimer >= _grenadeThrowDelay)
-        {
-            _grenadeTimer = 0f;
-            ThrowGrenadeNow();
-        }
     }
 
     public override void HandleInput(PlayerInputData input)
     {
-        
+
     }
 
     private void ThrowGrenadeEvent()
@@ -76,7 +65,7 @@ public class PlayerThrowGrenadeState : PlayerStateBase
             if (input.IsMoving && input.ShootTriggered)
             {
                 return PlayerState.MoveAndShoot;
-            }    
+            }
             else if (input.IsMoving)
             {
                 return PlayerState.Move;
@@ -102,11 +91,7 @@ public class PlayerThrowGrenadeState : PlayerStateBase
     public override void Exit()
     {
         Debug.Log("Exiting Throw Grenade State");
-
-        if (player.AnimationController.OnStartThrowGrenade != null)
-        {
-            player.AnimationController.OnStartThrowGrenade -= ThrowGrenadeEvent;
-        }
+        player.AnimationController.OnStartThrowGrenade -= ThrowGrenadeEvent;
 
         _grenadeTimer = 0f;
         _grenadeThrown = false;
