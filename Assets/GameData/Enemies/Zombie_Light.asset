@@ -19,8 +19,8 @@ MonoBehaviour:
   AttackDamage: 2
   AttackRange: 1
   AttackCooldown: 3
-  ChaseRange: 5
-  DetectionRange: 30
+  ChaseRange: 100
+  DetectionRange: 100
   PatrolSpeed: 2
   ChaseSpeed: 2
   WaypointStoppingDistance: 1

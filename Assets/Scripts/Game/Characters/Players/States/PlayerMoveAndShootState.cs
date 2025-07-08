@@ -42,8 +42,8 @@ public class PlayerMoveAndShootState : PlayerStateBase
         if (_movementDirection.magnitude > 0.01f)
         {
             player.Movement.Move(_movementDirection);
-            Vector3 combinedDirection = CalculateCombinedAnimationDirection();
-            player.AnimationController.SetMovement(combinedDirection);
+            Vector3 animationDirection = CalculateAnimationDirection();
+            player.AnimationController.SetMovement(animationDirection);
         }
 
         if (_aimingDirection.magnitude > 0.01f)
@@ -58,19 +58,22 @@ public class PlayerMoveAndShootState : PlayerStateBase
         }
     }
 
-    private Vector3 CalculateCombinedAnimationDirection()
+    private Vector3 CalculateAnimationDirection()
     {
         Vector3 localMovement = player.transform.InverseTransformDirection(_movementDirection);
-        Vector3 localAiming = Vector3.zero;
 
         if (_aimingDirection.magnitude > 0.01f)
         {
-            localAiming = player.transform.InverseTransformDirection(_aimingDirection);
+            Vector3 localAiming = player.transform.InverseTransformDirection(_aimingDirection.normalized);
+
+            float forwardComponent = Vector3.Dot(localMovement, localAiming);
+            float rightComponent = Vector3.Cross(localAiming, localMovement).y;
+
+            Vector3 adjustedDirection = new Vector3(rightComponent, 0, forwardComponent);
+            return adjustedDirection * 4f;
         }
 
-        Vector3 combinedLocal = localMovement * 0.7f + localAiming * 0.3f;
-        combinedLocal *= 4f;
-        return combinedLocal;
+        return localMovement * 4f;
     }
 
     public override PlayerState? CheckTransitions(PlayerInputData input)

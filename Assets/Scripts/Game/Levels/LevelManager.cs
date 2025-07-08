@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LevelManager : MonoBehaviour
+public class LevelManager : MonoSingleton<LevelManager>
 {
     [SerializeField]
     private LevelData _currentLevelData;
@@ -33,13 +33,14 @@ public class LevelManager : MonoBehaviour
 
     private int _totalZombiesKilled = 0;
 
-    // Properties
     public LevelData CurrentLevelData => _currentLevelData;
     public int CurrentWave => _currentWaveIndex;
     public int TotalWaves => _currentLevelData.waves.Length;
     public int ZombiesKilled => _totalZombiesKilled;
     public int ZombiesSpawned => _totalZombiesSpawned;
     public bool IsLevelActive => !_levelCompleted;
+
+    public bool IsStartLevel { get; set; }
 
     public void LoadLevel(LevelData levelData)
     {
@@ -49,7 +50,15 @@ public class LevelManager : MonoBehaviour
 
     private void Update()
     {
-        if (_levelCompleted || _currentLevelData == null) return;
+        if (_levelCompleted || _currentLevelData == null) 
+        { 
+            return; 
+        }
+
+        if (!IsStartLevel)
+        {
+            return;
+        }
 
         _levelTimer += Time.deltaTime;
 
@@ -85,7 +94,6 @@ public class LevelManager : MonoBehaviour
             }
         }
 
-        // Clean up completed spawners
         _activeWaveSpawners.RemoveAll(spawner => spawner.IsCompleted);
     }
 
@@ -113,12 +121,6 @@ public class LevelManager : MonoBehaviour
     private void OnZombieSpawned(GameObject zombie)
     {
         _totalZombiesSpawned++;
-
-        //var healthComponent = zombie.GetComponent<HealthComponent>();
-        //if (healthComponent != null)
-        //{
-        //    healthComponent.OnDeath += () => OnZombieDied(zombie);
-        //}
     }
 
     private void OnZombieDied(GameObject zombie)

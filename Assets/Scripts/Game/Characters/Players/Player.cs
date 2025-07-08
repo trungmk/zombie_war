@@ -31,7 +31,6 @@ public class Player : BaseCharacter, ITakeDamage
         Grenade.Setup(this);
 
         Health.Setup(PlayerData.MaxHealth);
-        Health.OnHealthChanged = Handle_OnHealthChanged;
         Health.OnDied = Handle_OnDied;
 
         StateMachine.ChangeState(PlayerState.Idle);
@@ -40,6 +39,10 @@ public class Player : BaseCharacter, ITakeDamage
     private void Handle_OnDied()
     {
         Debug.Log("Player Died");
+        MobileInput.Instance.gameObject.SetActive(false);
+        Shooting.StopShooting();
+        WeaponManager.Instance.CurrentProjectileWeapon.gameObject.SetActive(false);
+        StateMachine.ChangeState(PlayerState.Die);
     }
 
     private void Handle_OnHealthChanged(int currentHealth, int maxHealth)

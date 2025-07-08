@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   waveStartTime: 3
   waveDuration: 90
-  totalZombies: 25
+  totalZombies: 40
   spawnInterval: 2
   zombieTypes:
   - enemyType: 0

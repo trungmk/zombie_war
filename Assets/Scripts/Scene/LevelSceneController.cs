@@ -14,6 +14,12 @@ public class LevelSceneController : SceneController
 
     public override void OnLoaded()
     {
+        LoadingTransition loadingTransition = UIManager.Instance.GetCache<LoadingTransition>();
+        loadingTransition.OnTapToPlayClicked += () =>
+        {
+            LevelManager.Instance.IsStartLevel = true;
+        };
+
         MobileInput.Instance.SetInputFilter(_inputHandler);
         _inputHandler.RegisterTouchTarget(_joyStickHandler);
         UIManager.Instance.Show<InGamePanel>(_joyStickHandler)

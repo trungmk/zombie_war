@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Grenade_1
   m_EditorClassIdentifier: 
   GrenadeName: Frag
-  Damage: 100
-  ExplosionRadius: 8
+  Damage: 50
+  ExplosionRadius: 3
   ExplosionForce: 500
   ThrowForce: 5
-  MaxThrowDistance: 20
+  MaxThrowDistance: 8
   CountDownTime: 1
   ThrowCurve:
     serializedVersion: 2
@@ -43,6 +43,5 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  ExplosionEffect: {fileID: 0}
   ExplosionSound: {fileID: 8300000, guid: 79c3cb7a26813d146b07c293b0324039, type: 3}
   PinPullSound: {fileID: 0}

@@ -88,7 +88,7 @@ public class GrenadeWeapon : Weapon
             OnFireCompleted(this);
         }
 
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
         _pooledMono.ReturnToPool(); 
     }
 }
