@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 0fa031e6fa38d33418d62066c994ac84
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 46209
+  packageName: Tanks! | Complete Project
+  packageVersion: 3.0
+  assetPath: Assets/_Tanks/Settings/TextMesh Pro/Shaders/TMP_Bitmap-Custom-Atlas.shader
+  uploadId: 747463

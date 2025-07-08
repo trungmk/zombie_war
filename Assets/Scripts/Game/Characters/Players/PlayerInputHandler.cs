@@ -111,5 +111,11 @@ public class PlayerInputHandler : MonoBehaviour
     {
         SetGrenade(true);
         _inputDataDirty = true;
-    }    
+    }
+
+    public void ResetGrenadeInput()
+    {
+        GrenadePressed = false;
+        _inputDataDirty = true;
+    }
 }

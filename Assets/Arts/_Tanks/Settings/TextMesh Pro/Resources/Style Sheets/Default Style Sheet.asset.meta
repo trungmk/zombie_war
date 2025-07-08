@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: b04070ffb3398364495c5ee955236f6e
+timeCreated: 1432805430
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 46209
+  packageName: Tanks! | Complete Project
+  packageVersion: 3.0
+  assetPath: Assets/_Tanks/Settings/TextMesh Pro/Resources/Style Sheets/Default Style
+    Sheet.asset
+  uploadId: 747463

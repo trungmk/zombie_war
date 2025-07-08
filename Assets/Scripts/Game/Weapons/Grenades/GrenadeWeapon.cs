@@ -14,18 +14,22 @@ public class GrenadeWeapon : Weapon
     [SerializeField]
     private ParticleSystem _hitEffect;
 
-    private Rigidbody _rigidbody;
-
     public GrenadeWeaponData GrenadeData => _grenadeData;
 
     public Action<GrenadeWeapon> OnFireCompleted;
 
     public bool IsUsing { get; set; }
 
+    private Rigidbody _rigidbody;
+
+
+    private PooledMono _pooledMono;
+         
     private void Awake()
     {
         WeaponType = WeaponType.Grenade;
         _rigidbody = GetComponent<Rigidbody>();
+        _pooledMono = GetComponent<PooledMono>();
     }
 
     public override void Fire(Vector3 direction)
@@ -52,11 +56,9 @@ public class GrenadeWeapon : Weapon
     private IEnumerator GrenadeFuseCoroutine()
     {
         yield return new WaitForSeconds(_grenadeData.CountDownTime);
-            
 
         if (_hitEffect != null)
         {
-            _hitEffect.gameObject.SetActive(true);
             _hitEffect.Play();
         }
 
@@ -85,5 +87,8 @@ public class GrenadeWeapon : Weapon
         {
             OnFireCompleted(this);
         }
+
+        yield return new WaitForSeconds(2);
+        _pooledMono.ReturnToPool(); 
     }
 }

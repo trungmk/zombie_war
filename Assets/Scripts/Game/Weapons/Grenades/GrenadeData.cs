@@ -19,8 +19,6 @@ public class GrenadeWeaponData : ScriptableObject
 
     public AnimationCurve ThrowCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-    public GameObject ExplosionEffect;
-
     public AudioClip ExplosionSound;
 
     public AudioClip PinPullSound;

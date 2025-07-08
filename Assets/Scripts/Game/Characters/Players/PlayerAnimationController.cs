@@ -29,6 +29,10 @@ public class PlayerAnimationController : MonoBehaviour
 
     public Action OnStartThrowGrenade { get; set; }
 
+    public Action OnShowWeapon { get; set; }
+
+    public Action OnHideWeapon { get; set; }
+
     private void Awake()
     {
         // Cache parameter hashes for performance
@@ -107,6 +111,24 @@ public class PlayerAnimationController : MonoBehaviour
         if (_rig != null)
         {
             _rig.weight = 1f;
+        }
+    }
+
+    public void ShowWeapon()
+    {
+        Debug.Log("AnimationController: Showing weapon");
+        if (OnShowWeapon != null)
+        {
+            OnShowWeapon();
+        }
+    }
+
+    public void HideWeapon()
+    {
+        Debug.Log("AnimationController: Hiding weapon");
+        if (OnHideWeapon != null)
+        {
+            OnHideWeapon();
         }
     }
 }

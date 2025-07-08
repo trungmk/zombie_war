@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 083d343e762a1b5499bfa6546cf8b61d
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  preprocessorOverride: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 46209
+  packageName: Tanks! | Complete Project
+  packageVersion: 3.0
+  assetPath: Assets/_Tanks/Settings/TextMesh Pro/Shaders/SDFFunctions.hlsl
+  uploadId: 747463

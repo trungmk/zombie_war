@@ -19,6 +19,7 @@ public class PlayerThrowGrenadeState : PlayerStateBase
         player.Shooting.StopShooting();
         player.AnimationController.TriggerThrowGrenade();
         player.AnimationController.OnStartThrowGrenade += ThrowGrenadeEvent;
+        player.InputHandler.ResetGrenadeInput();
     }
 
     public override void Update()

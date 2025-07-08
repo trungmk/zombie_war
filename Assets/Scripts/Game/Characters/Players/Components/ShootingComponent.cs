@@ -31,6 +31,22 @@ public class ShootingComponent : BaseComponent
         _weaponHoldPoint = _player.WeaponTransform;
         _rotationSpeed = player.PlayerData.RotationSpeed;
         SetCurrentProjectileWeapon(WeaponManager.Instance.CurrentProjectileWeapon);
+
+        _player.AnimationController.OnShowWeapon = () =>
+        {
+            if (_currentWeapon != null)
+            {
+                _currentWeapon.gameObject.SetActive(true);
+            }
+        };
+
+        _player.AnimationController.OnHideWeapon = () =>
+        {
+            if (_currentWeapon != null)
+            {
+                _currentWeapon.gameObject.SetActive(false);
+            }
+        };
     }
 
     private void Handle_OnProjectileWeaponChanged(ProjectileWeapon weapon)

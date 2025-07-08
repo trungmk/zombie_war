@@ -23,6 +23,7 @@ public class PlayerMoveAndThrowGrenadeState : PlayerStateBase
         player.AnimationController.SetIsFire(false);
         player.AnimationController.TriggerThrowGrenade();
         player.InputHandler.SetGrenade(false);
+        player.InputHandler.ResetGrenadeInput();
     }
 
     public override void Update()

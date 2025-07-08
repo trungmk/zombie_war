@@ -42,8 +42,8 @@ public class PlayerMoveAndShootState : PlayerStateBase
         if (_movementDirection.magnitude > 0.01f)
         {
             player.Movement.Move(_movementDirection);
-            Vector3 animationDirection = _movementDirection * 4f;
-            player.AnimationController.SetMovement(animationDirection);
+            Vector3 combinedDirection = CalculateCombinedAnimationDirection();
+            player.AnimationController.SetMovement(combinedDirection);
         }
 
         if (_aimingDirection.magnitude > 0.01f)
@@ -56,6 +56,21 @@ public class PlayerMoveAndShootState : PlayerStateBase
             _aimingDirection = player.transform.forward;
             player.Shooting.AutoShoot(_aimingDirection);
         }
+    }
+
+    private Vector3 CalculateCombinedAnimationDirection()
+    {
+        Vector3 localMovement = player.transform.InverseTransformDirection(_movementDirection);
+        Vector3 localAiming = Vector3.zero;
+
+        if (_aimingDirection.magnitude > 0.01f)
+        {
+            localAiming = player.transform.InverseTransformDirection(_aimingDirection);
+        }
+
+        Vector3 combinedLocal = localMovement * 0.7f + localAiming * 0.3f;
+        combinedLocal *= 4f;
+        return combinedLocal;
     }
 
     public override PlayerState? CheckTransitions(PlayerInputData input)

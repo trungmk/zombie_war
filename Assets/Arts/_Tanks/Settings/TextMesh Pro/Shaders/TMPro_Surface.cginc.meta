@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 43c397d880d8e5e499889cf3b1ccbccc
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 46209
+  packageName: Tanks! | Complete Project
+  packageVersion: 3.0
+  assetPath: Assets/_Tanks/Settings/TextMesh Pro/Shaders/TMPro_Surface.cginc
+  uploadId: 747463

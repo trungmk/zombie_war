@@ -191,7 +191,7 @@ public class Enemy : BaseCharacter, ITakeDamage
         pos.y += 1;
         go.transform.position = pos;
 
-        await UniTask.WaitForSeconds(1f);
+        await UniTask.WaitForSeconds(3f);
 
         ObjectPooling.Instance.ReturnToPool(go);
     }
@@ -239,7 +239,6 @@ public class Enemy : BaseCharacter, ITakeDamage
 
     public void TakeDamage(int damageAmount)
     {
-        Debug.Log("Hit damage:" + damageAmount);
         _healthComponent.TakeDamage(damageAmount);
     }
 

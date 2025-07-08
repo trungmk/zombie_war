@@ -16,9 +16,9 @@ MonoBehaviour:
   Damage: 100
   ExplosionRadius: 8
   ExplosionForce: 500
-  ThrowForce: 15
+  ThrowForce: 5
   MaxThrowDistance: 20
-  CountDownTime: 2
+  CountDownTime: 1
   ThrowCurve:
     serializedVersion: 2
     m_Curve:
@@ -44,5 +44,5 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   ExplosionEffect: {fileID: 0}
-  ExplosionSound: {fileID: 0}
+  ExplosionSound: {fileID: 8300000, guid: 79c3cb7a26813d146b07c293b0324039, type: 3}
   PinPullSound: {fileID: 0}

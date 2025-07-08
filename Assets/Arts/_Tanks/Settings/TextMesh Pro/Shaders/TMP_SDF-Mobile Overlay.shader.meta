@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f0a6cf4ed3a19a347a9e6011f747f589
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 46209
+  packageName: Tanks! | Complete Project
+  packageVersion: 3.0
+  assetPath: Assets/_Tanks/Settings/TextMesh Pro/Shaders/TMP_SDF-Mobile Overlay.shader
+  uploadId: 747463

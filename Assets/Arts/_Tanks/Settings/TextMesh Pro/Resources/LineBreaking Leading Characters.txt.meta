@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ad9696de0ac58f446a2f1e3f8a1d67cc
+timeCreated: 1425440388
+licenseType: Store
+TextScriptImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 46209
+  packageName: Tanks! | Complete Project
+  packageVersion: 3.0
+  assetPath: Assets/_Tanks/Settings/TextMesh Pro/Resources/LineBreaking Leading Characters.txt
+  uploadId: 747463
