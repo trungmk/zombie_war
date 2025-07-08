@@ -11,7 +11,8 @@ public class PlayerIdleState : PlayerStateBase
     public override void Enter()
     {
         player.Movement.StopMovement();
-        player.AnimationController.SetMovement(0);
+        player.AnimationController.SetMovement(Vector2.zero);
+        player.AnimationController.SetIsMoving(false);
 
         WeaponManager.Instance.OnUseGrenade += HandleGrenadeInput;
     }

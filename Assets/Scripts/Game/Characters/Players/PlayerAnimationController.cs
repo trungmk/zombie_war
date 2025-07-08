@@ -11,16 +11,20 @@ public class PlayerAnimationController : MonoBehaviour
     private Rig _rig;
 
     private const string GRENADE_TRIGGER = "ThrowGrenade";
-    private const string MOVEMENT_SPEED_PARAM = "MovementSpeed";
+    private const string MOVEMENT_X_PARAM = "MovementX";
+    private const string MOVEMENT_Z_PARAM = "MovementZ";
     private const string WEAPONTYPE_PARAM = "WeaponType";
     private const string IS_FIRING_PARAM = "IsFire";
     private const string CHANGE_WEAPON = "ChangeWeapon";
+    private const string IS_MOVING_PARAM = "IsMoving";
 
     private int _grenadeHash;
-    private int _movementSpeedHash;
+    private int _movementXHash;
+    private int _movementZHash;
     private int _weaponTypeHash;
     private int _fireHash;
     private int _changeWeaponHash;
+    private int _isMovingHash;
 
     public Action OnStartThrowGrenade { get; set; }
 
@@ -28,17 +32,31 @@ public class PlayerAnimationController : MonoBehaviour
     {
         // Cache parameter hashes for performance
         _grenadeHash = Animator.StringToHash(GRENADE_TRIGGER);
-        _movementSpeedHash = Animator.StringToHash(MOVEMENT_SPEED_PARAM);
+        _movementXHash = Animator.StringToHash(MOVEMENT_X_PARAM);
+        _movementZHash = Animator.StringToHash(MOVEMENT_Z_PARAM);
         _weaponTypeHash = Animator.StringToHash(WEAPONTYPE_PARAM);
         _fireHash = Animator.StringToHash(IS_FIRING_PARAM);
         _changeWeaponHash = Animator.StringToHash(CHANGE_WEAPON);
+        _isMovingHash = Animator.StringToHash(IS_MOVING_PARAM);
 
         StartRig();
     }
 
-    public void SetMovement(float speed)
+    public void SetMovement(float x, float y)
     {
-        _animator.SetFloat(_movementSpeedHash, speed);
+        _animator.SetFloat(_movementXHash, x);
+        _animator.SetFloat(_movementZHash, y);
+    }
+
+    public void SetMovement(Vector3 direction)
+    {
+        _animator.SetFloat(_movementXHash, direction.x);
+        _animator.SetFloat(_movementZHash, direction.z); 
+    }
+
+    public void SetIsMoving(bool isMoving)
+    {
+        _animator.SetBool(_isMovingHash, isMoving);
     }
 
     public void SetIsFire(bool isFire)

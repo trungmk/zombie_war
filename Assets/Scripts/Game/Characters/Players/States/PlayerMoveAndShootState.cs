@@ -4,7 +4,6 @@ using UnityEngine.PlayerLoop;
 public class PlayerMoveAndShootState : PlayerStateBase
 {
     private Vector3 _movementDirection;
-
     private Vector3 _aimingDirection;
 
     public PlayerMoveAndShootState(Player player, PlayerStateMachine stateMachine) : base(player, stateMachine)
@@ -22,15 +21,16 @@ public class PlayerMoveAndShootState : PlayerStateBase
         }
 
         player.AnimationController.SetIsFire(true);
-        player.AnimationController.SetWeaponType((int) WeaponManager.Instance.CurrentProjectileWeapon.ProjectileWeaponType);
+        player.AnimationController.SetWeaponType((int)WeaponManager.Instance.CurrentProjectileWeapon.ProjectileWeaponType);
     }
 
     public override void HandleInput(PlayerInputData input)
     {
-        if(!input.IsMoving)
+        if (!input.IsMoving)
         {
             player.Movement.Move(Vector3.zero);
-            player.AnimationController.SetMovement(0f);
+            player.AnimationController.SetMovement(Vector3.zero);
+            player.AnimationController.SetIsMoving(false);
             stateMachine.ChangeState(PlayerState.Shoot);
         }
 
@@ -43,8 +43,8 @@ public class PlayerMoveAndShootState : PlayerStateBase
         if (_movementDirection.magnitude > 0.01f)
         {
             player.Movement.Move(_movementDirection);
-            float speed = _movementDirection.magnitude * 4f;
-            player.AnimationController.SetMovement(speed);
+            Vector3 animationDirection = _movementDirection * 3f;
+            player.AnimationController.SetMovement(animationDirection);
         }
 
         if (_aimingDirection.magnitude > 0.01f)
@@ -71,7 +71,7 @@ public class PlayerMoveAndShootState : PlayerStateBase
         if (!input.IsMoving && !input.ShootTriggered)
         {
             return PlayerState.Idle;
-        }     
+        }
         if (input.IsMoving && !input.ShootTriggered)
         {
             return PlayerState.Move;

@@ -38,13 +38,6 @@ public class PlayerMoveAndThrowGrenadeState : PlayerStateBase
     public override void HandleInput(PlayerInputData input)
     {
         _movementDirection = new Vector3(input.MovementInput.x, 0, input.MovementInput.y);
-        //player.Movement.Move(_movementDirection);
-
-        //if (!_grenadeThrown && input.AimingInput.magnitude > 0.01f)
-        //{
-        //    Vector3 aimDirection = new Vector3(input.AimingInput.x, 0, input.AimingInput.y);
-        //    player.Movement.Rotate(aimDirection);
-        //}
     }
 
     private void ThrowGrenadeWithCurrentAim()
@@ -62,8 +55,9 @@ public class PlayerMoveAndThrowGrenadeState : PlayerStateBase
     {
         player.Movement.MoveAndRotate(_movementDirection);
 
-        float speed = _movementDirection.magnitude * 4f;
-        player.AnimationController.SetMovement(speed);
+        Vector3 animationDirection = _movementDirection * 3f;
+        player.AnimationController.SetMovement(animationDirection);
+        player.AnimationController.SetIsMoving(true);
     }
 
     public override PlayerState? CheckTransitions(PlayerInputData input)
